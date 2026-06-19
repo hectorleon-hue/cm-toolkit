@@ -1,0 +1,1450 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+body{margin:0}
+@keyframes g2gfade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:#c3cedd;border-radius:6px}
+::-webkit-scrollbar-track{background:transparent}
+@media print{ aside, header { display:none !important } main { overflow:visible !important } }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</helmet>
+
+<template id="__bundler_thumbnail">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#041328"/><stop offset="1" stop-color="#122D4D"/></linearGradient></defs>
+<rect width="400" height="400" rx="64" fill="url(#g)"/>
+<circle cx="200" cy="168" r="58" fill="none" stroke="#33B4D2" stroke-width="10"/>
+<path d="M200 230 v70 M150 300 h100" stroke="#3AEBFF" stroke-width="12" stroke-linecap="round"/>
+<text x="200" y="180" font-family="Montserrat,Arial,sans-serif" font-size="56" font-weight="900" fill="#3AEBFF" text-anchor="middle" dominant-baseline="middle">G2G</text>
+</svg>
+</template>
+
+<div style="height:100vh;display:flex;flex-direction:column;font-family:'Open Sans',Arial,sans-serif;background:#EEF2F7;color:#1B2330;overflow:hidden">
+
+  <header style="height:64px;flex-shrink:0;background:linear-gradient(135deg,#041328 0%,#0A1E36 60%,#122D4D 100%);display:flex;align-items:center;justify-content:space-between;padding:0 26px;box-shadow:0 2px 14px rgba(4,19,40,.35);z-index:5">
+    <div style="display:flex;align-items:center;gap:14px">
+      <img src="brand/G2G_logo.png" alt="Grow2GetherMx" style="width:44px;height:44px;border-radius:50%;flex-shrink:0;box-shadow:0 0 0 1px rgba(51,180,210,.3)"/>
+      <div>
+        <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:14px;color:#fff;letter-spacing:.3px">CM Toolkit</div>
+        <div style="font-size:9.5px;color:#33B4D2;letter-spacing:1.6px;font-weight:700;text-transform:uppercase">Agentes de Cambio · G2G0526</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px">
+      <div style="display:flex;align-items:center;gap:9px">
+        <div style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px;color:#fff">{{ headerTitle }}</div>
+        <sc-if value="{{ headerTier }}" hint-placeholder-val="T1"><span style="font-size:10px;font-weight:800;padding:2px 7px;border-radius:8px;background:{{ headerTierColor }};color:#fff">{{ headerTier }}</span></sc-if>
+      </div>
+      <div style="width:1px;height:26px;background:rgba(255,255,255,.12)"></div>
+      <div style="max-width:200px;padding:6px 13px;border-radius:20px;background:rgba(51,180,210,.12);border:1px solid rgba(51,180,210,.4);color:#3AEBFF;font-size:11.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ projTitle }}</div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:10.5px;color:#7FA0BC;font-weight:600;white-space:nowrap"><span style="width:8px;height:8px;border-radius:50%;background:#34C759"></span>Guardado</div>
+      <div onClick="{{ openDbConfig }}" title="Configurar base de datos" style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:10.5px;color:#7FA0BC;font-weight:600;white-space:nowrap;padding:5px 10px;border-radius:8px;border:1px solid rgba(255,255,255,.12)" style-hover="background:rgba(255,255,255,.06);color:#cfe0ee"><span style="width:8px;height:8px;border-radius:50%;background:{{ dbDot }}"></span>Base de datos</div>
+    </div>
+  </header>
+
+  <div style="flex:1;display:flex;min-height:0">
+
+    <aside style="width:266px;flex-shrink:0;background:#071A30;border-right:1px solid #0E2440;overflow-y:auto;padding:18px 14px 40px">
+      <sc-for list="{{ navSections }}" as="sec" hint-placeholder-count="4">
+        <div style="margin-bottom:20px">
+          <div style="display:flex;align-items:center;gap:8px;padding:0 10px 8px">
+            <span style="width:6px;height:6px;border-radius:50%;background:{{ sec.accent }}"></span>
+            <span style="font-family:'Montserrat',sans-serif;font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:#5E7A9A">{{ sec.label }}</span>
+          </div>
+          <sc-for list="{{ sec.items }}" as="it" hint-placeholder-count="3">
+            <div onClick="{{ it.onClick }}" style="display:flex;align-items:center;gap:10px;padding:9px 11px;margin-bottom:2px;border-radius:9px;cursor:pointer;font-size:12.5px;font-weight:600;border-left:3px solid {{ it.accent }};background:{{ it.bg }};color:{{ it.color }};transition:background .15s" style-hover="background:rgba(255,255,255,.05);color:#cfe0ee">
+              <sc-if value="{{ it.showDot }}" hint-placeholder-val="{{ true }}"><span style="width:9px;height:9px;border-radius:50%;border:2px solid {{ it.dotColor }};background:{{ it.dotBg }};flex-shrink:0"></span></sc-if>
+              <span style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ it.name }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </sc-for>
+    </aside>
+
+    <main style="flex:1;min-width:0;overflow-y:auto;padding:30px 34px 60px">
+
+      <sc-if value="{{ isResumen }}" hint-placeholder-val="{{ true }}">
+        <div style="max-width:1080px;margin:0 auto">
+
+          <div style="background:linear-gradient(135deg,#041328 0%,#0A1E36 70%,#122D4D 100%);border-radius:16px;padding:28px 30px;color:#fff;box-shadow:0 10px 30px rgba(4,19,40,.25);margin-bottom:22px">
+            <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#3AEBFF;font-weight:700;margin-bottom:8px;font-family:'Montserrat',sans-serif">Centro de Mando del Cambio</div>
+            <div style="font-family:'Montserrat',sans-serif;font-weight:900;font-size:30px;line-height:1.1;margin-bottom:6px">{{ projTitle }}</div>
+            <div style="font-size:13px;color:#9DB6CC;margin-bottom:22px">{{ empresa }}</div>
+            <div style="display:flex;gap:38px;flex-wrap:wrap">
+              <div>
+                <div style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#5E7A9A;font-weight:700;margin-bottom:3px">Go-Live</div>
+                <div style="font-size:15px;font-weight:700;color:#fff">{{ metaGoLive }}</div>
+              </div>
+              <div>
+                <div style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#5E7A9A;font-weight:700;margin-bottom:3px">Personas impactadas</div>
+                <div style="font-size:15px;font-weight:700;color:#fff">{{ metaPersonas }}</div>
+              </div>
+              <div>
+                <div style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#5E7A9A;font-weight:700;margin-bottom:3px">Sponsor</div>
+                <div style="font-size:15px;font-weight:700;color:#fff">{{ metaSponsor }}</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:22px">
+            <div style="background:#fff;border:1px solid #E7ECF3;border-radius:14px;padding:18px 20px;box-shadow:0 1px 3px rgba(16,32,60,.05)">
+              <div style="font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:#6C757D;font-weight:700;margin-bottom:8px">Áreas analizadas</div>
+              <div style="font-family:'Montserrat',sans-serif;font-weight:900;font-size:28px;color:#041328">{{ totalAreas }}</div>
+            </div>
+            <div style="background:#fff;border:1px solid #E7ECF3;border-radius:14px;padding:18px 20px;box-shadow:0 1px 3px rgba(16,32,60,.05)">
+              <div style="font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:#6C757D;font-weight:700;margin-bottom:8px">Personas en alcance</div>
+              <div style="font-family:'Montserrat',sans-serif;font-weight:900;font-size:28px;color:#041328">{{ totalPersonas }}</div>
+            </div>
+            <div style="background:#fff;border:1px solid #E7ECF3;border-radius:14px;padding:18px 20px;box-shadow:0 1px 3px rgba(16,32,60,.05)">
+              <div style="font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:#6C757D;font-weight:700;margin-bottom:8px">Riesgo global</div>
+              <span style="display:inline-block;padding:6px 16px;border-radius:20px;font-weight:800;font-size:13px;background:{{ semBg }};color:{{ semColor }};border:1px solid {{ semColor }}">{{ sem }}</span>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:22px">
+            <sc-for list="{{ tierMeta }}" as="t" hint-placeholder-count="3">
+              <div style="background:#fff;border:1px solid #E7ECF3;border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(16,32,60,.05)">
+                <div style="padding:14px 18px;background:{{ t.accent }};color:#fff;display:flex;align-items:center;justify-content:space-between">
+                  <div><div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:13px">{{ t.tier }} · {{ t.label }}</div><div style="font-size:11px;opacity:.85">{{ t.sub }}</div></div>
+                  <div style="font-family:'Montserrat',sans-serif;font-weight:900;font-size:13px;background:rgba(255,255,255,.18);padding:3px 9px;border-radius:10px">{{ t.doneCount }}/{{ t.total }}</div>
+                </div>
+                <sc-if value="{{ showProgress }}" hint-placeholder-val="{{ true }}">
+                  <div style="height:6px;background:#EEF2F7"><div style="height:100%;width:{{ t.pctW }};background:{{ t.accent }}"></div></div>
+                </sc-if>
+                <div style="padding:10px 8px">
+                  <sc-for list="{{ t.items }}" as="it" hint-placeholder-count="3">
+                    <div onClick="{{ it.onClick }}" style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;cursor:pointer;font-size:12.5px;color:#33425A;font-weight:600" style-hover="background:#F2F6FB">
+                      <span style="width:9px;height:9px;border-radius:50%;border:2px solid {{ it.dotColorL }};background:{{ it.dotBgL }};flex-shrink:0"></span>
+                      <span>{{ it.name }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:18px;background:#fff;border:1px solid #E7ECF3;border-left:4px solid #33B4D2;border-radius:14px;padding:18px 22px;box-shadow:0 1px 3px rgba(16,32,60,.05)">
+            <div><div style="font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:#1A8BA8;font-weight:800;margin-bottom:4px">Siguiente paso</div><div style="font-size:14px;color:#1B2330">{{ nextMsg }}</div></div>
+            <div onClick="{{ goNext }}" style="cursor:pointer;background:linear-gradient(135deg,#33B4D2,#1A8BA8);color:#fff;font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;padding:11px 18px;border-radius:9px;white-space:nowrap" style-hover="filter:brightness(1.08)">Ir a {{ nextName }} →</div>
+          </div>
+
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isProyecto }}" hint-placeholder-val="{{ true }}">
+        <div style="max-width:880px;margin:0 auto">
+          <div style="background:#fff;border:1px solid #E7ECF3;border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(16,32,60,.05)">
+            <div style="padding:16px 22px;background:linear-gradient(90deg,#041328,#0A1E36);color:#3AEBFF;font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px">Datos Generales del Proyecto</div>
+            <div style="padding:24px">
+              <div style="background:#E3F6FB;border-left:3px solid #33B4D2;padding:11px 15px;border-radius:0 8px 8px 0;font-size:13px;color:#0A3242;margin-bottom:20px;line-height:1.5">Estos datos alimentan el encabezado de cada entregable y el Centro de Mando — en tiempo real.</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px">
+                <sc-for list="{{ projectFields }}" as="f" hint-placeholder-count="8">
+                  <div style="display:flex;flex-direction:column;gap:6px">
+                    <label style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#041328">{{ f.label }}</label>
+                    <input type="{{ f.type }}" value="{{ f.value }}" onChange="{{ f.onChange }}" placeholder="{{ f.ph }}" style="width:100%;padding:10px 13px;border:1.5px solid #DDE3EC;border-radius:8px;font-size:13px;font-family:'Open Sans',Arial,sans-serif;background:#FAFBFC;color:#1B2330" style-focus="border-color:#33B4D2;background:#fff;outline:none"/>
+                  </div>
+                </sc-for>
+              </div>
+              <sc-for list="{{ projectAreas }}" as="f" hint-placeholder-count="2">
+                <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px">
+                  <label style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#041328">{{ f.label }}</label>
+                  <textarea value="{{ f.value }}" onChange="{{ f.onChange }}" placeholder="{{ f.ph }}" style="width:100%;min-height:74px;padding:10px 13px;border:1.5px solid #DDE3EC;border-radius:8px;font-size:13px;font-family:'Open Sans',Arial,sans-serif;background:#FAFBFC;color:#1B2330;resize:vertical" style-focus="border-color:#33B4D2;background:#fff;outline:none"></textarea>
+                </div>
+              </sc-for>
+              <div style="font-size:12px;color:#6C757D;display:flex;align-items:center;gap:7px;margin-top:4px"><span style="width:8px;height:8px;border-radius:50%;background:#31A540"></span> Se guarda automáticamente mientras escribes.</div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isImpacto }}" hint-placeholder-val="{{ true }}">
+        <div style="max-width:1080px;margin:0 auto">
+
+          <div style="background:#fff;border:1px solid #E7ECF3;border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(16,32,60,.05);margin-bottom:22px">
+            <div style="padding:16px 22px;background:linear-gradient(90deg,#7A1520,#A5202A);color:#fff;font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:space-between">
+              <span>Análisis de Impacto · Tier 1</span><span style="font-size:11px;opacity:.85;font-weight:600">El resumen se actualiza en vivo ↓</span>
+            </div>
+            <div style="padding:20px">
+              <div style="overflow-x:auto">
+                <table style="width:100%;border-collapse:collapse;font-size:12.5px">
+                  <thead><tr>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">Área / Proceso</th>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">¿Qué cambia?</th>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">Tipo</th>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">Impacto</th>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">N° Pers.</th>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">Riesgo</th>
+                    <th style="background:#041328;color:#fff;padding:10px;width:42px"></th>
+                  </tr></thead>
+                  <tbody>
+                    <sc-for list="{{ impactoRows }}" as="r" hint-placeholder-count="2">
+                      <tr style="background:{{ r.rowBg }}">
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><input value="{{ r.area }}" onChange="{{ r.onArea }}" placeholder="Ej: Nómina" style="width:100%;padding:7px 9px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;font-family:'Open Sans',Arial,sans-serif;background:#fff" style-focus="border-color:#33B4D2;outline:none"/></td>
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><input value="{{ r.que }}" onChange="{{ r.onQue }}" placeholder="Ej: Nuevo cálculo" style="width:100%;padding:7px 9px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;font-family:'Open Sans',Arial,sans-serif;background:#fff" style-focus="border-color:#33B4D2;outline:none"/></td>
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><select value="{{ r.tipo }}" onChange="{{ r.onTipo }}" style="width:100%;padding:7px 8px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;background:#fff;font-family:'Open Sans',Arial,sans-serif"><option>Personas</option><option>Proceso</option><option>Tecnología</option></select></td>
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><select value="{{ r.nivel }}" onChange="{{ r.onNivel }}" style="width:100%;padding:7px 8px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;background:#fff;font-family:'Open Sans',Arial,sans-serif"><option value="1">1 · Mínimo</option><option value="2">2 · Bajo</option><option value="3">3 · Medio</option><option value="4">4 · Alto</option><option value="5">5 · Crítico</option></select></td>
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><input type="number" value="{{ r.personas }}" onChange="{{ r.onPersonas }}" placeholder="0" style="width:70px;padding:7px 8px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;font-family:'Open Sans',Arial,sans-serif;background:#fff" style-focus="border-color:#33B4D2;outline:none"/></td>
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><select value="{{ r.riesgo }}" onChange="{{ r.onRiesgo }}" style="width:100%;padding:7px 8px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;background:#fff;font-family:'Open Sans',Arial,sans-serif"><option>Alto</option><option>Medio</option><option>Bajo</option></select></td>
+                        <td style="text-align:center;border-bottom:1px solid #EEF2F7"><div onClick="{{ r.onDel }}" style="cursor:pointer;color:#A5202A;background:#fdecea;width:26px;height:26px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:12px" style-hover="background:#A5202A;color:#fff">✕</div></td>
+                      </tr>
+                    </sc-for>
+                  </tbody>
+                </table>
+              </div>
+              <div style="margin-top:16px"><div onClick="{{ addImpacto }}" style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;border:2px solid #33B4D2;color:#1A8BA8;font-family:'Montserrat',sans-serif;font-weight:700;font-size:12.5px;padding:8px 15px;border-radius:8px" style-hover="background:#33B4D2;color:#fff">+ Agregar área</div></div>
+            </div>
+          </div>
+
+          <div style="background:#fff;border:1px solid #E7ECF3;border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(16,32,60,.05)">
+            <div style="padding:16px 22px;background:#041328;color:#3AEBFF;font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px">Resumen Ejecutivo</div>
+            <div style="padding:22px">
+              <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px">
+                <div style="background:#F7FAFD;border:1px solid #E7ECF3;border-radius:12px;padding:14px 16px">
+                  <div style="font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;color:#6C757D;font-weight:700;margin-bottom:6px">Áreas</div>
+                  <div style="font-family:'Montserrat',sans-serif;font-weight:900;font-size:24px;color:#041328">{{ totalAreas }}</div>
+                </div>
+                <div style="background:#F7FAFD;border:1px solid #E7ECF3;border-radius:12px;padding:14px 16px">
+                  <div style="font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;color:#6C757D;font-weight:700;margin-bottom:6px">Personas</div>
+                  <div style="font-family:'Montserrat',sans-serif;font-weight:900;font-size:24px;color:#041328">{{ totalPersonas }}</div>
+                </div>
+                <div style="background:#F7FAFD;border:1px solid #E7ECF3;border-radius:12px;padding:14px 16px">
+                  <div style="font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;color:#6C757D;font-weight:700;margin-bottom:6px">Alto / Crítico</div>
+                  <div style="font-family:'Montserrat',sans-serif;font-weight:900;font-size:24px;color:#A5202A">{{ altos }}</div>
+                </div>
+                <div style="background:#F7FAFD;border:1px solid #E7ECF3;border-radius:12px;padding:14px 16px">
+                  <div style="font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;color:#6C757D;font-weight:700;margin-bottom:6px">Tipo predominante</div>
+                  <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:18px;color:#041328">{{ tipoMax }}</div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
+                <span style="font-size:12.5px;font-weight:700;color:#33425A">Nivel de riesgo global:</span>
+                <span style="display:inline-block;padding:6px 16px;border-radius:20px;font-weight:800;font-size:13px;background:{{ semBg }};color:{{ semColor }};border:1px solid {{ semColor }}">{{ sem }}</span>
+              </div>
+              <div style="background:#F7FAFD;border:1px solid #E7ECF3;border-radius:12px;padding:16px 18px">
+                <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:13px;color:#041328;margin-bottom:12px">Próximos pasos recomendados</div>
+                <sc-for list="{{ nextSteps }}" as="step" hint-placeholder-count="3">
+                  <div style="display:flex;gap:10px;margin-bottom:9px;font-size:13px;color:#33425A;line-height:1.5"><span style="color:#33B4D2;font-weight:900">▸</span><span>{{ step }}</span></div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isStakeholders }}" hint-placeholder-val="{{ true }}">
+        <div style="max-width:1080px;margin:0 auto">
+
+          <div style="background:#fff;border:1px solid #E7ECF3;border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(16,32,60,.05);margin-bottom:22px">
+            <div style="padding:16px 22px;background:linear-gradient(90deg,#7A1520,#A5202A);color:#fff;font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:space-between">
+              <span>Mapa de Stakeholders · Tier 1</span><span style="font-size:11px;opacity:.85;font-weight:600">El cuadrante se genera en vivo ↓</span>
+            </div>
+            <div style="padding:20px">
+              <div style="overflow-x:auto">
+                <table style="width:100%;border-collapse:collapse;font-size:12.5px">
+                  <thead><tr>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">Nombre / Rol</th>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">Área</th>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">Poder</th>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">Interés</th>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">Posición actual</th>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">Meta</th>
+                    <th style="background:#041328;color:#fff;padding:10px;width:42px"></th>
+                  </tr></thead>
+                  <tbody>
+                    <sc-for list="{{ skRows }}" as="r" hint-placeholder-count="3">
+                      <tr style="background:#fff">
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><input value="{{ r.nombre }}" onChange="{{ r.onNombre }}" placeholder="Ej: Directora de RRHH" style="width:100%;padding:7px 9px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;font-family:'Open Sans',Arial,sans-serif;background:#fff" style-focus="border-color:#33B4D2;outline:none"/></td>
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><input value="{{ r.area }}" onChange="{{ r.onArea }}" placeholder="Ej: Capital Humano" style="width:100%;padding:7px 9px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;font-family:'Open Sans',Arial,sans-serif;background:#fff" style-focus="border-color:#33B4D2;outline:none"/></td>
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><select value="{{ r.poder }}" onChange="{{ r.onPoder }}" style="width:100%;padding:7px 8px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;background:#fff;font-family:'Open Sans',Arial,sans-serif"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></td>
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><select value="{{ r.interes }}" onChange="{{ r.onInteres }}" style="width:100%;padding:7px 8px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;background:#fff;font-family:'Open Sans',Arial,sans-serif"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></td>
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><select value="{{ r.actual }}" onChange="{{ r.onActual }}" style="width:100%;padding:7px 8px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;background:#fff;font-family:'Open Sans',Arial,sans-serif"><option>A favor</option><option>Neutral</option><option>Resistente</option><option>Desconocida</option></select></td>
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><select value="{{ r.meta }}" onChange="{{ r.onMeta }}" style="width:100%;padding:7px 8px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;background:#fff;font-family:'Open Sans',Arial,sans-serif"><option>Promotor</option><option>A favor</option><option>Neutral</option></select></td>
+                        <td style="text-align:center;border-bottom:1px solid #EEF2F7"><div onClick="{{ r.onDel }}" style="cursor:pointer;color:#A5202A;background:#fdecea;width:26px;height:26px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:12px" style-hover="background:#A5202A;color:#fff">✕</div></td>
+                      </tr>
+                    </sc-for>
+                  </tbody>
+                </table>
+              </div>
+              <div style="margin-top:16px"><div onClick="{{ addStakeholder }}" style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;border:2px solid #33B4D2;color:#1A8BA8;font-family:'Montserrat',sans-serif;font-weight:700;font-size:12.5px;padding:8px 15px;border-radius:8px" style-hover="background:#33B4D2;color:#fff">+ Agregar stakeholder</div></div>
+            </div>
+          </div>
+
+          <div style="background:#fff;border:1px solid #E7ECF3;border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(16,32,60,.05);margin-bottom:22px">
+            <div style="padding:16px 22px;background:#041328;color:#3AEBFF;font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px">Cuadrante Poder / Interés</div>
+            <div style="padding:22px">
+              <div style="display:flex;gap:12px">
+                <div style="display:flex;align-items:center;justify-content:center;width:22px"><span style="writing-mode:vertical-rl;transform:rotate(180deg);font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:#6C757D">Poder →</span></div>
+                <div style="flex:1">
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                    <sc-for list="{{ skCells }}" as="c" hint-placeholder-count="4">
+                      <div style="background:{{ c.bg }};border:2px solid {{ c.accent }};border-radius:12px;padding:14px;min-height:128px">
+                        <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:12.5px;color:{{ c.accent }}">{{ c.title }}</div>
+                        <div style="font-size:9.5px;color:#6C757D;font-weight:700;margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px">{{ c.sub }}</div>
+                        <div style="display:flex;flex-wrap:wrap;gap:6px">
+                          <sc-for list="{{ c.chips }}" as="chip" hint-placeholder-count="2">
+                            <span style="display:inline-block;background:{{ chip.chipColor }};color:#fff;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600">{{ chip.name }}</span>
+                          </sc-for>
+                        </div>
+                      </div>
+                    </sc-for>
+                  </div>
+                  <div style="text-align:center;font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:#6C757D;margin-top:10px">Interés →</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="background:#fff;border:1px solid #E7ECF3;border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(16,32,60,.05)">
+            <div style="padding:16px 22px;background:#041328;color:#3AEBFF;font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px">Estrategia por Stakeholder</div>
+            <div style="padding:22px">
+              <div style="overflow-x:auto">
+                <table style="width:100%;border-collapse:collapse;font-size:12.5px;margin-bottom:6px">
+                  <thead><tr>
+                    <th style="background:#F2F5F9;color:#041328;padding:9px 10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.4px;text-transform:uppercase;font-weight:800">Stakeholder</th>
+                    <th style="background:#F2F5F9;color:#041328;padding:9px 10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.4px;text-transform:uppercase;font-weight:800">Área</th>
+                    <th style="background:#F2F5F9;color:#041328;padding:9px 10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.4px;text-transform:uppercase;font-weight:800">Poder</th>
+                    <th style="background:#F2F5F9;color:#041328;padding:9px 10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.4px;text-transform:uppercase;font-weight:800">Interés</th>
+                    <th style="background:#F2F5F9;color:#041328;padding:9px 10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.4px;text-transform:uppercase;font-weight:800">Posición</th>
+                    <th style="background:#F2F5F9;color:#041328;padding:9px 10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.4px;text-transform:uppercase;font-weight:800">Meta</th>
+                    <th style="background:#F2F5F9;color:#041328;padding:9px 10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.4px;text-transform:uppercase;font-weight:800">Estrategia</th>
+                  </tr></thead>
+                  <tbody>
+                    <sc-for list="{{ skRows }}" as="r" hint-placeholder-count="3">
+                      <tr>
+                        <td style="padding:8px 10px;border-bottom:1px solid #EEF2F7;font-weight:700;color:#041328">{{ r.nombre }}</td>
+                        <td style="padding:8px 10px;border-bottom:1px solid #EEF2F7;color:#33425A">{{ r.area }}</td>
+                        <td style="padding:8px 10px;border-bottom:1px solid #EEF2F7;color:#33425A">{{ r.poder }}/5</td>
+                        <td style="padding:8px 10px;border-bottom:1px solid #EEF2F7;color:#33425A">{{ r.interes }}/5</td>
+                        <td style="padding:8px 10px;border-bottom:1px solid #EEF2F7;color:#33425A">{{ r.actual }}</td>
+                        <td style="padding:8px 10px;border-bottom:1px solid #EEF2F7;color:#33425A">{{ r.meta }}</td>
+                        <td style="padding:8px 10px;border-bottom:1px solid #EEF2F7;font-weight:700;color:#1A8BA8">{{ r.estrategia }}</td>
+                      </tr>
+                    </sc-for>
+                  </tbody>
+                </table>
+              </div>
+              <sc-if value="{{ skResistN }}" hint-placeholder-val="1">
+                <div style="background:#FDF3F4;border:1px solid #F3D2D5;border-left:4px solid #A5202A;border-radius:0 12px 12px 0;padding:16px 18px;margin-top:18px">
+                  <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:13px;color:#A5202A;margin-bottom:12px">⚠ Stakeholders resistentes — plan de acción</div>
+                  <sc-for list="{{ skResist }}" as="r" hint-placeholder-count="1">
+                    <div style="margin-bottom:9px;font-size:13px;color:#33425A;line-height:1.5"><strong style="color:#A5202A">{{ r.nombre }}</strong> ({{ r.area }}): sesión 1:1 para escuchar preocupaciones, conectar con su WIIFM personal y dar seguimiento semanal.</div>
+                  </sc-for>
+                </div>
+              </sc-if>
+            </div>
+          </div>
+
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isMitig }}" hint-placeholder-val="{{ true }}">
+        <div style="max-width:1080px;margin:0 auto">
+
+          <div style="background:#fff;border:1px solid #E7ECF3;border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(16,32,60,.05);margin-bottom:22px">
+            <div style="padding:16px 22px;background:linear-gradient(90deg,#7A1520,#A5202A);color:#fff;font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px">Plan de Mitigación · Tier 1</div>
+            <div style="padding:20px">
+              <div style="overflow-x:auto">
+                <table style="width:100%;border-collapse:collapse;font-size:12.5px">
+                  <thead><tr>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">Impacto / Riesgo</th>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">Acción de mitigación</th>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">Responsable</th>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">Fecha</th>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">Prioridad</th>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">Estatus</th>
+                    <th style="background:#041328;color:#fff;padding:10px;width:42px"></th>
+                  </tr></thead>
+                  <tbody>
+                    <sc-for list="{{ mitigRows }}" as="r" hint-placeholder-count="2">
+                      <tr style="background:#fff">
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><input value="{{ r.impacto }}" onChange="{{ r.onImpacto }}" placeholder="Ej: Alta rotación" style="width:100%;padding:7px 9px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;font-family:'Open Sans',Arial,sans-serif;background:#fff" style-focus="border-color:#33B4D2;outline:none"/></td>
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><input value="{{ r.accion }}" onChange="{{ r.onAccion }}" placeholder="Ej: Sesiones Q&amp;A" style="width:100%;padding:7px 9px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;font-family:'Open Sans',Arial,sans-serif;background:#fff" style-focus="border-color:#33B4D2;outline:none"/></td>
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><input value="{{ r.resp }}" onChange="{{ r.onResp }}" placeholder="Responsable" style="width:100%;padding:7px 9px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;font-family:'Open Sans',Arial,sans-serif;background:#fff" style-focus="border-color:#33B4D2;outline:none"/></td>
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><input type="date" value="{{ r.fecha }}" onChange="{{ r.onFecha }}" style="width:138px;padding:7px 8px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;font-family:'Open Sans',Arial,sans-serif;background:#fff" style-focus="border-color:#33B4D2;outline:none"/></td>
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><select value="{{ r.prioridad }}" onChange="{{ r.onPrioridad }}" style="width:100%;padding:7px 8px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;background:#fff;font-family:'Open Sans',Arial,sans-serif"><option>Alta</option><option>Media</option><option>Baja</option></select></td>
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><select value="{{ r.estatus }}" onChange="{{ r.onEstatus }}" style="width:100%;padding:7px 8px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;background:#fff;font-family:'Open Sans',Arial,sans-serif"><option>Pendiente</option><option>En proceso</option><option>Completado</option></select></td>
+                        <td style="text-align:center;border-bottom:1px solid #EEF2F7"><div onClick="{{ r.onDel }}" style="cursor:pointer;color:#A5202A;background:#fdecea;width:26px;height:26px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:12px" style-hover="background:#A5202A;color:#fff">✕</div></td>
+                      </tr>
+                    </sc-for>
+                  </tbody>
+                </table>
+              </div>
+              <div style="margin-top:16px"><div onClick="{{ addMitig }}" style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;border:2px solid #33B4D2;color:#1A8BA8;font-family:'Montserrat',sans-serif;font-weight:700;font-size:12.5px;padding:8px 15px;border-radius:8px" style-hover="background:#33B4D2;color:#fff">+ Agregar acción</div></div>
+            </div>
+          </div>
+
+          <div style="background:#fff;border:1px solid #E7ECF3;border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(16,32,60,.05);margin-bottom:22px">
+            <div style="padding:16px 22px;background:linear-gradient(90deg,#041328,#0A1E36);color:#3AEBFF;font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px">Los 3 Mensajes Fundamentales del Cambio</div>
+            <div style="padding:22px;display:flex;flex-direction:column;gap:16px">
+              <sc-for list="{{ msgFields }}" as="m" hint-placeholder-count="3">
+                <div style="border:1px solid #E7ECF3;border-left:4px solid {{ m.accent }};border-radius:0 12px 12px 0;overflow:hidden">
+                  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:{{ m.accentBg }}">
+                    <span style="width:26px;height:26px;border-radius:50%;background:{{ m.accent }};color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Montserrat',sans-serif;font-weight:800;font-size:13px;flex-shrink:0">{{ m.num }}</span>
+                    <div><div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:13px;color:{{ m.accent }}">{{ m.label }}</div><div style="font-size:11px;color:#6C757D;font-weight:600">{{ m.sub }}</div></div>
+                  </div>
+                  <textarea value="{{ m.value }}" onChange="{{ m.onChange }}" placeholder="{{ m.ph }}" style="width:100%;min-height:70px;padding:12px 16px;border:none;font-size:13px;font-family:'Open Sans',Arial,sans-serif;background:#fff;color:#1B2330;resize:vertical;display:block" style-focus="outline:none;background:#FAFBFC"></textarea>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="background:#fff;border:1px solid #E7ECF3;border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(16,32,60,.05)">
+            <div style="padding:16px 22px;background:#041328;color:#3AEBFF;font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px">Resumen y Certificación Tier 1</div>
+            <div style="padding:22px">
+              <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px">
+                <div style="background:#F7FAFD;border:1px solid #E7ECF3;border-radius:12px;padding:14px 16px">
+                  <div style="font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;color:#6C757D;font-weight:700;margin-bottom:6px">Acciones</div>
+                  <div style="font-family:'Montserrat',sans-serif;font-weight:900;font-size:24px;color:#041328">{{ mitTotal }}</div>
+                </div>
+                <div style="background:#F7FAFD;border:1px solid #E7ECF3;border-radius:12px;padding:14px 16px">
+                  <div style="font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;color:#6C757D;font-weight:700;margin-bottom:6px">Completadas</div>
+                  <div style="font-family:'Montserrat',sans-serif;font-weight:900;font-size:24px;color:#28863A">{{ mitDone }}</div>
+                </div>
+                <div style="background:#F7FAFD;border:1px solid #E7ECF3;border-radius:12px;padding:14px 16px">
+                  <div style="font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;color:#6C757D;font-weight:700;margin-bottom:6px">En proceso</div>
+                  <div style="font-family:'Montserrat',sans-serif;font-weight:900;font-size:24px;color:#c47000">{{ mitProc }}</div>
+                </div>
+                <div style="background:#F7FAFD;border:1px solid #E7ECF3;border-radius:12px;padding:14px 16px">
+                  <div style="font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;color:#6C757D;font-weight:700;margin-bottom:6px">Alta prioridad</div>
+                  <div style="font-family:'Montserrat',sans-serif;font-weight:900;font-size:24px;color:#A5202A">{{ mitAlta }}</div>
+                </div>
+              </div>
+
+              <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:12px;color:#041328;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Entregables del Tier 1</div>
+              <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px">
+                <sc-for list="{{ tier1Checks }}" as="c" hint-placeholder-count="3">
+                  <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:#33425A;font-weight:600">
+                    <span style="width:18px;height:18px;border-radius:50%;border:2px solid {{ c.dotColor }};background:{{ c.dotBg }};flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:800"></span>
+                    <span>{{ c.name }}</span>
+                  </div>
+                </sc-for>
+              </div>
+
+              <sc-if value="{{ tier1Complete }}" hint-placeholder-val="{{ false }}">
+                <div style="background:linear-gradient(135deg,#041328 0%,#0A1E36 50%,#122D4D 100%);color:#3AEBFF;text-align:center;padding:28px 24px;border-radius:14px;border:1px solid rgba(51,180,210,.3);box-shadow:0 6px 24px rgba(51,180,210,.12)">
+                  <div style="font-size:38px;margin-bottom:6px">🏆</div>
+                  <div style="font-family:'Montserrat',sans-serif;font-weight:900;font-size:18px;letter-spacing:.5px;color:#fff">CERTIFICACIÓN TIER 1 COMPLETADA</div>
+                  <div style="color:#9DB6CC;font-size:13px;margin-top:6px">{{ certName }} &nbsp;·&nbsp; {{ certEmpresa }} &nbsp;·&nbsp; Agentes de Cambio G2G0526</div>
+                </div>
+              </sc-if>
+              <sc-if value="{{ tier1NotComplete }}" hint-placeholder-val="{{ false }}">
+                <div style="background:#FFF8E8;border:1px solid #F4D7A8;border-left:4px solid #E08A00;border-radius:0 12px 12px 0;padding:14px 18px;font-size:13px;color:#7A4E00;line-height:1.5">Completa los 3 entregables del Tier 1 (Impacto, Stakeholders y Mitigación) para obtener tu certificación.</div>
+              </sc-if>
+            </div>
+          </div>
+
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isComms }}" hint-placeholder-val="{{ true }}">
+        <div style="max-width:1080px;margin:0 auto">
+
+          <div style="background:#fff;border:1px solid #E7ECF3;border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(16,32,60,.05);margin-bottom:22px">
+            <div style="padding:16px 22px;background:linear-gradient(90deg,#c47000,#E08A00);color:#fff;font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px">Plan de Comunicación · Tier 2</div>
+            <div style="padding:20px">
+              <div style="overflow-x:auto">
+                <table style="width:100%;border-collapse:collapse;font-size:12.5px;min-width:840px">
+                  <thead><tr>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700;width:36px">#</th>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">Audiencia</th>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">Mensaje clave</th>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">Canal</th>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">Frecuencia</th>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">Responsable</th>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">Fecha/Mes</th>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">Estatus</th>
+                    <th style="background:#041328;color:#fff;padding:10px;width:42px"></th>
+                  </tr></thead>
+                  <tbody>
+                    <sc-for list="{{ commsRows }}" as="r" hint-placeholder-count="2">
+                      <tr style="background:#fff">
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7;color:#6C757D;font-weight:700;text-align:center">{{ r.num }}</td>
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><input value="{{ r.aud }}" onChange="{{ r.onAud }}" placeholder="Ej: Directores" style="width:100%;padding:7px 9px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;font-family:'Open Sans',Arial,sans-serif;background:#fff" style-focus="border-color:#33B4D2;outline:none"/></td>
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><input value="{{ r.msg }}" onChange="{{ r.onMsg }}" placeholder="Ej: Avance del proyecto" style="width:100%;padding:7px 9px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;font-family:'Open Sans',Arial,sans-serif;background:#fff" style-focus="border-color:#33B4D2;outline:none"/></td>
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><select value="{{ r.canal }}" onChange="{{ r.onCanal }}" style="width:100%;padding:7px 8px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;background:#fff;font-family:'Open Sans',Arial,sans-serif"><option>Email</option><option>Reunión</option><option>Town Hall</option><option>Video</option><option>Intranet</option><option>1:1</option><option>Teams/WhatsApp</option><option>Cartelera</option></select></td>
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><select value="{{ r.freq }}" onChange="{{ r.onFreq }}" style="width:100%;padding:7px 8px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;background:#fff;font-family:'Open Sans',Arial,sans-serif"><option>Único</option><option>Semanal</option><option>Quincenal</option><option>Mensual</option><option>Por hito</option></select></td>
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><input value="{{ r.resp }}" onChange="{{ r.onResp }}" placeholder="Responsable" style="width:100%;padding:7px 9px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;font-family:'Open Sans',Arial,sans-serif;background:#fff" style-focus="border-color:#33B4D2;outline:none"/></td>
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><input value="{{ r.fecha }}" onChange="{{ r.onFecha }}" placeholder="Ej: Jun 2026" style="width:96px;padding:7px 9px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;font-family:'Open Sans',Arial,sans-serif;background:#fff" style-focus="border-color:#33B4D2;outline:none"/></td>
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><select value="{{ r.estatus }}" onChange="{{ r.onEstatus }}" style="width:100%;padding:7px 8px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;background:#fff;font-family:'Open Sans',Arial,sans-serif"><option>Planeado</option><option>En proceso</option><option>Enviado</option></select></td>
+                        <td style="text-align:center;border-bottom:1px solid #EEF2F7"><div onClick="{{ r.onDel }}" style="cursor:pointer;color:#A5202A;background:#fdecea;width:26px;height:26px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:12px" style-hover="background:#A5202A;color:#fff">✕</div></td>
+                      </tr>
+                    </sc-for>
+                  </tbody>
+                </table>
+              </div>
+              <div style="margin-top:16px"><div onClick="{{ addComms }}" style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;border:2px solid #33B4D2;color:#1A8BA8;font-family:'Montserrat',sans-serif;font-weight:700;font-size:12.5px;padding:8px 15px;border-radius:8px" style-hover="background:#33B4D2;color:#fff">+ Agregar comunicación</div></div>
+            </div>
+          </div>
+
+          <div style="background:#fff;border:1px solid #E7ECF3;border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(16,32,60,.05)">
+            <div style="padding:16px 22px;background:linear-gradient(90deg,#041328,#0A1E36);color:#3AEBFF;font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px">Framework WIIFM — ¿Qué gana cada nivel?</div>
+            <div style="padding:22px">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+                <sc-for list="{{ wiifmFields }}" as="w" hint-placeholder-count="4">
+                  <div style="display:flex;flex-direction:column;gap:6px">
+                    <label style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#041328">{{ w.label }}</label>
+                    <textarea value="{{ w.value }}" onChange="{{ w.onChange }}" placeholder="{{ w.ph }}" style="width:100%;min-height:70px;padding:10px 13px;border:1.5px solid #DDE3EC;border-radius:8px;font-size:13px;font-family:'Open Sans',Arial,sans-serif;background:#FAFBFC;color:#1B2330;resize:vertical" style-focus="border-color:#33B4D2;background:#fff;outline:none"></textarea>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isTrain }}" hint-placeholder-val="{{ true }}">
+        <div style="max-width:1080px;margin:0 auto">
+
+          <div style="background:#fff;border:1px solid #E7ECF3;border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(16,32,60,.05);margin-bottom:22px">
+            <div style="padding:16px 22px;background:linear-gradient(90deg,#c47000,#E08A00);color:#fff;font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px">Plan de Entrenamiento · Tier 2</div>
+            <div style="padding:20px">
+              <div style="overflow-x:auto">
+                <table style="width:100%;border-collapse:collapse;font-size:12.5px;min-width:920px">
+                  <thead><tr>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">Grupo</th>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">¿Qué saber?</th>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">¿Qué hacer?</th>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">Modalidad</th>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">Duración</th>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">Fecha</th>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">Responsable</th>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">Evaluación</th>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">Estatus</th>
+                    <th style="background:#041328;color:#fff;padding:10px;width:42px"></th>
+                  </tr></thead>
+                  <tbody>
+                    <sc-for list="{{ trainRows }}" as="r" hint-placeholder-count="2">
+                      <tr style="background:#fff">
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><input value="{{ r.grupo }}" onChange="{{ r.onGrupo }}" placeholder="Ej: Supervisores" style="width:100%;padding:7px 9px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;font-family:'Open Sans',Arial,sans-serif;background:#fff" style-focus="border-color:#33B4D2;outline:none"/></td>
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><input value="{{ r.saber }}" onChange="{{ r.onSaber }}" placeholder="Ej: Nuevo proceso" style="width:100%;padding:7px 9px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;font-family:'Open Sans',Arial,sans-serif;background:#fff" style-focus="border-color:#33B4D2;outline:none"/></td>
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><input value="{{ r.hacer }}" onChange="{{ r.onHacer }}" placeholder="Ej: Capturar en sistema" style="width:100%;padding:7px 9px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;font-family:'Open Sans',Arial,sans-serif;background:#fff" style-focus="border-color:#33B4D2;outline:none"/></td>
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><select value="{{ r.modalidad }}" onChange="{{ r.onModalidad }}" style="width:100%;padding:7px 8px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;background:#fff;font-family:'Open Sans',Arial,sans-serif"><option>Presencial</option><option>Virtual</option><option>eLearning</option><option>Coaching</option><option>OJT</option></select></td>
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><input value="{{ r.dur }}" onChange="{{ r.onDur }}" placeholder="Ej: 4 hrs" style="width:80px;padding:7px 9px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;font-family:'Open Sans',Arial,sans-serif;background:#fff" style-focus="border-color:#33B4D2;outline:none"/></td>
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><input type="date" value="{{ r.fecha }}" onChange="{{ r.onFecha }}" style="width:138px;padding:7px 8px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;font-family:'Open Sans',Arial,sans-serif;background:#fff" style-focus="border-color:#33B4D2;outline:none"/></td>
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><input value="{{ r.resp }}" onChange="{{ r.onResp }}" placeholder="Facilitador" style="width:100%;padding:7px 9px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;font-family:'Open Sans',Arial,sans-serif;background:#fff" style-focus="border-color:#33B4D2;outline:none"/></td>
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><input value="{{ r.evalText }}" onChange="{{ r.onEval }}" placeholder="Ej: Quiz + práctica" style="width:100%;padding:7px 9px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;font-family:'Open Sans',Arial,sans-serif;background:#fff" style-focus="border-color:#33B4D2;outline:none"/></td>
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><select value="{{ r.estatus }}" onChange="{{ r.onEstatus }}" style="width:100%;padding:7px 8px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;background:#fff;font-family:'Open Sans',Arial,sans-serif"><option>Por diseñar</option><option>Diseñado</option><option>En piloto</option><option>Lanzado</option></select></td>
+                        <td style="text-align:center;border-bottom:1px solid #EEF2F7"><div onClick="{{ r.onDel }}" style="cursor:pointer;color:#A5202A;background:#fdecea;width:26px;height:26px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:12px" style-hover="background:#A5202A;color:#fff">✕</div></td>
+                      </tr>
+                    </sc-for>
+                  </tbody>
+                </table>
+              </div>
+              <div style="margin-top:16px"><div onClick="{{ addTrain }}" style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;border:2px solid #33B4D2;color:#1A8BA8;font-family:'Montserrat',sans-serif;font-weight:700;font-size:12.5px;padding:8px 15px;border-radius:8px" style-hover="background:#33B4D2;color:#fff">+ Agregar grupo</div></div>
+            </div>
+          </div>
+
+          <div style="background:#fff;border:1px solid #E7ECF3;border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(16,32,60,.05)">
+            <div style="padding:16px 22px;background:#041328;color:#3AEBFF;font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px">Resumen del Plan</div>
+            <div style="padding:22px">
+              <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+                <div style="background:#F7FAFD;border:1px solid #E7ECF3;border-radius:12px;padding:14px 18px"><div style="font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;color:#6C757D;font-weight:700;margin-bottom:6px">Grupos a capacitar</div><div style="font-family:'Montserrat',sans-serif;font-weight:900;font-size:24px;color:#041328">{{ trainGroups }}</div></div>
+              </div>
+              <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:12px;color:#041328;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Por modalidad</div>
+              <div style="display:flex;flex-wrap:wrap;gap:8px">
+                <sc-for list="{{ trainMods }}" as="m" hint-placeholder-count="2">
+                  <span style="display:inline-flex;align-items:center;gap:6px;background:#FFF8E8;border:1px solid #F4D7A8;color:#7A4E00;padding:6px 13px;border-radius:20px;font-size:12.5px;font-weight:700">{{ m.name }}<span style="background:#E08A00;color:#fff;border-radius:10px;padding:1px 7px;font-size:11px">{{ m.n }}</span></span>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isKpis }}" hint-placeholder-val="{{ true }}">
+        <div style="max-width:1080px;margin:0 auto">
+
+          <div style="background:#fff;border:1px solid #E7ECF3;border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(16,32,60,.05);margin-bottom:22px">
+            <div style="padding:16px 22px;background:linear-gradient(90deg,#c47000,#E08A00);color:#fff;font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:space-between">
+              <span>Dashboard de KPIs · Tier 2</span><span style="font-size:11px;opacity:.85;font-weight:600">ADKAR · metas 30 / 60 / 90 días</span>
+            </div>
+            <div style="padding:20px">
+              <div style="overflow-x:auto">
+                <table style="width:100%;border-collapse:collapse;font-size:12.5px;min-width:680px">
+                  <thead><tr>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">Elemento ADKAR</th>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">¿Cómo lo mides?</th>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">Base %</th>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">30d %</th>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">60d %</th>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">90d %</th>
+                  </tr></thead>
+                  <tbody>
+                    <sc-for list="{{ adkarRows }}" as="r" hint-placeholder-count="5">
+                      <tr style="background:#fff">
+                        <td style="padding:6px 8px;border-bottom:1px solid #EEF2F7;font-weight:800;color:#041328">{{ r.label }}</td>
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><input value="{{ r.como }}" onChange="{{ r.onComo }}" placeholder="Ej: Encuesta" style="width:100%;padding:7px 9px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;font-family:'Open Sans',Arial,sans-serif;background:#fff" style-focus="border-color:#33B4D2;outline:none"/></td>
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><input type="number" value="{{ r.base }}" onChange="{{ r.onBase }}" style="width:62px;padding:7px 8px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;font-family:'Open Sans',Arial,sans-serif;background:#fff" style-focus="border-color:#33B4D2;outline:none"/></td>
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><input type="number" value="{{ r.m30 }}" onChange="{{ r.onM30 }}" style="width:62px;padding:7px 8px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;font-family:'Open Sans',Arial,sans-serif;background:#fff" style-focus="border-color:#33B4D2;outline:none"/></td>
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><input type="number" value="{{ r.m60 }}" onChange="{{ r.onM60 }}" style="width:62px;padding:7px 8px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;font-family:'Open Sans',Arial,sans-serif;background:#fff" style-focus="border-color:#33B4D2;outline:none"/></td>
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><input type="number" value="{{ r.m90 }}" onChange="{{ r.onM90 }}" style="width:62px;padding:7px 8px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;font-family:'Open Sans',Arial,sans-serif;background:#fff" style-focus="border-color:#33B4D2;outline:none"/></td>
+                      </tr>
+                    </sc-for>
+                  </tbody>
+                </table>
+              </div>
+              <div style="margin-top:20px">
+                <sc-for list="{{ adkarRows }}" as="r" hint-placeholder-count="5">
+                  <div style="margin-bottom:14px">
+                    <div style="display:flex;justify-content:space-between;font-family:'Montserrat',sans-serif;font-weight:700;font-size:12.5px;margin-bottom:5px;color:#041328"><span>{{ r.label }}</span><span style="color:#6C757D;font-weight:600">{{ r.base }}% actual → meta {{ r.m90 }}%</span></div>
+                    <div style="background:#E7ECF3;border-radius:6px;height:12px;overflow:hidden"><div style="height:100%;width:{{ r.pctW }};background:linear-gradient(90deg,#33B4D2,#31A540);border-radius:6px"></div></div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+
+          <div style="background:#fff;border:1px solid #E7ECF3;border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(16,32,60,.05);margin-bottom:22px">
+            <div style="padding:16px 22px;background:linear-gradient(90deg,#041328,#0A1E36);color:#3AEBFF;font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px">KPI de Negocio</div>
+            <div style="padding:22px">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+                <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#041328">KPI de negocio principal</label><input value="{{ kpiNegocio }}" onChange="{{ onKpiNegocio }}" placeholder="Ej: Reducción de errores en nómina" style="width:100%;padding:10px 13px;border:1.5px solid #DDE3EC;border-radius:8px;font-size:13px;font-family:'Open Sans',Arial,sans-serif;background:#FAFBFC;color:#1B2330" style-focus="border-color:#33B4D2;background:#fff;outline:none"/></div>
+                <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#041328">Meta del KPI</label><input value="{{ kpiMeta }}" onChange="{{ onKpiMeta }}" placeholder="Ej: -40% en 90 días" style="width:100%;padding:10px 13px;border:1.5px solid #DDE3EC;border-radius:8px;font-size:13px;font-family:'Open Sans',Arial,sans-serif;background:#FAFBFC;color:#1B2330" style-focus="border-color:#33B4D2;background:#fff;outline:none"/></div>
+                <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#041328">Responsable de medición</label><input value="{{ kpiResp }}" onChange="{{ onKpiResp }}" placeholder="Nombre / rol" style="width:100%;padding:10px 13px;border:1.5px solid #DDE3EC;border-radius:8px;font-size:13px;font-family:'Open Sans',Arial,sans-serif;background:#FAFBFC;color:#1B2330" style-focus="border-color:#33B4D2;background:#fff;outline:none"/></div>
+                <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#041328">Frecuencia de reporte</label><select value="{{ kpiFreq }}" onChange="{{ onKpiFreq }}" style="width:100%;padding:10px 13px;border:1.5px solid #DDE3EC;border-radius:8px;font-size:13px;background:#FAFBFC;font-family:'Open Sans',Arial,sans-serif"><option>Semanal</option><option>Quincenal</option><option>Mensual</option></select></div>
+              </div>
+            </div>
+          </div>
+
+          <div style="background:#fff;border:1px solid #E7ECF3;border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(16,32,60,.05)">
+            <div style="padding:16px 22px;background:#041328;color:#3AEBFF;font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px">Certificación Tier 2</div>
+            <div style="padding:22px">
+              <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px">
+                <sc-for list="{{ tier2Checks }}" as="c" hint-placeholder-count="3">
+                  <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:#33425A;font-weight:600">
+                    <span style="width:18px;height:18px;border-radius:50%;border:2px solid {{ c.dotColor }};background:{{ c.dotBg }};flex-shrink:0"></span>
+                    <span>{{ c.name }}</span>
+                  </div>
+                </sc-for>
+              </div>
+              <sc-if value="{{ tier2Complete }}" hint-placeholder-val="{{ false }}">
+                <div style="background:linear-gradient(135deg,#041328 0%,#0A1E36 50%,#122D4D 100%);color:#3AEBFF;text-align:center;padding:28px 24px;border-radius:14px;border:1px solid rgba(51,180,210,.3);box-shadow:0 6px 24px rgba(51,180,210,.12)">
+                  <div style="font-size:38px;margin-bottom:6px">🏆</div>
+                  <div style="font-family:'Montserrat',sans-serif;font-weight:900;font-size:18px;letter-spacing:.5px;color:#fff">CERTIFICACIÓN TIER 2 COMPLETADA</div>
+                  <div style="color:#9DB6CC;font-size:13px;margin-top:6px">{{ certName }} &nbsp;·&nbsp; {{ certEmpresa }} &nbsp;·&nbsp; Agentes de Cambio G2G0526</div>
+                </div>
+              </sc-if>
+              <sc-if value="{{ tier2NotComplete }}" hint-placeholder-val="{{ false }}">
+                <div style="background:#FFF8E8;border:1px solid #F4D7A8;border-left:4px solid #E08A00;border-radius:0 12px 12px 0;padding:14px 18px;font-size:13px;color:#7A4E00;line-height:1.5">Completa los 3 entregables del Tier 2 (Comunicación, Entrenamiento y KPIs) para obtener tu certificación.</div>
+              </sc-if>
+            </div>
+          </div>
+
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isSustain }}" hint-placeholder-val="{{ true }}">
+        <div style="max-width:1080px;margin:0 auto">
+
+          <div style="background:#fff;border:1px solid #E7ECF3;border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(16,32,60,.05);margin-bottom:22px">
+            <div style="padding:16px 22px;background:linear-gradient(90deg,#1d6b28,#28863A);color:#fff;font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px">Plan de Sustain Avanzado · Tier 3</div>
+            <div style="padding:24px">
+
+              <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:12px;color:#1d6b28;text-transform:uppercase;letter-spacing:.5px;padding-bottom:6px;border-bottom:2px solid #31A540;margin-bottom:14px">1 · Accountability</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:14px">
+                <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#041328">¿Quién responde por el comportamiento sostenido?</label><input value="{{ sustainFields.accQuien }}" onChange="{{ susHandlers.accQuien }}" placeholder="Nombre / rol" style="width:100%;padding:10px 13px;border:1.5px solid #DDE3EC;border-radius:8px;font-size:13px;font-family:'Open Sans',Arial,sans-serif;background:#FAFBFC;color:#1B2330" style-focus="border-color:#33B4D2;background:#fff;outline:none"/></div>
+                <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#041328">Mecanismo de seguimiento</label><input value="{{ sustainFields.accMec }}" onChange="{{ susHandlers.accMec }}" placeholder="Ej: Reporte semanal de uso" style="width:100%;padding:10px 13px;border:1.5px solid #DDE3EC;border-radius:8px;font-size:13px;font-family:'Open Sans',Arial,sans-serif;background:#FAFBFC;color:#1B2330" style-focus="border-color:#33B4D2;background:#fff;outline:none"/></div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:6px;max-width:300px;margin-bottom:22px"><label style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#041328">Frecuencia de revisión</label><select value="{{ sustainFields.accFreq }}" onChange="{{ susHandlers.accFreq }}" style="width:100%;padding:10px 13px;border:1.5px solid #DDE3EC;border-radius:8px;font-size:13px;background:#FAFBFC;font-family:'Open Sans',Arial,sans-serif"><option>Semanal</option><option>Quincenal</option><option>Mensual</option></select></div>
+
+              <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:12px;color:#1d6b28;text-transform:uppercase;letter-spacing:.5px;padding-bottom:6px;border-bottom:2px solid #31A540;margin-bottom:14px">2 · Reconocimiento</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:22px">
+                <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#041328">¿Cómo celebramos el avance?</label><textarea value="{{ sustainFields.recComo }}" onChange="{{ susHandlers.recComo }}" placeholder="Ej: Reconocimiento en junta mensual..." style="width:100%;min-height:70px;padding:10px 13px;border:1.5px solid #DDE3EC;border-radius:8px;font-size:13px;font-family:'Open Sans',Arial,sans-serif;background:#FAFBFC;color:#1B2330;resize:vertical" style-focus="border-color:#33B4D2;background:#fff;outline:none"></textarea></div>
+                <div style="display:flex;flex-direction:column;gap:12px">
+                  <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#041328">¿Quién reconoce?</label><input value="{{ sustainFields.recQuien }}" onChange="{{ susHandlers.recQuien }}" placeholder="Ej: Director de área, sponsor" style="width:100%;padding:10px 13px;border:1.5px solid #DDE3EC;border-radius:8px;font-size:13px;font-family:'Open Sans',Arial,sans-serif;background:#FAFBFC;color:#1B2330" style-focus="border-color:#33B4D2;background:#fff;outline:none"/></div>
+                  <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#041328">Criterios</label><input value="{{ sustainFields.recCriterios }}" onChange="{{ susHandlers.recCriterios }}" placeholder="Ej: 90% adopción en 60 días" style="width:100%;padding:10px 13px;border:1.5px solid #DDE3EC;border-radius:8px;font-size:13px;font-family:'Open Sans',Arial,sans-serif;background:#FAFBFC;color:#1B2330" style-focus="border-color:#33B4D2;background:#fff;outline:none"/></div>
+                </div>
+              </div>
+
+              <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:12px;color:#1d6b28;text-transform:uppercase;letter-spacing:.5px;padding-bottom:6px;border-bottom:2px solid #31A540;margin-bottom:14px">3 · Consecuencias</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:22px">
+                <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#041328">¿Qué pasa si no se adopta el cambio?</label><textarea value="{{ sustainFields.consQue }}" onChange="{{ susHandlers.consQue }}" placeholder="Describe las consecuencias..." style="width:100%;min-height:70px;padding:10px 13px;border:1.5px solid #DDE3EC;border-radius:8px;font-size:13px;font-family:'Open Sans',Arial,sans-serif;background:#FAFBFC;color:#1B2330;resize:vertical" style-focus="border-color:#33B4D2;background:#fff;outline:none"></textarea></div>
+                <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#041328">¿Quién aplica las consecuencias?</label><input value="{{ sustainFields.consQuien }}" onChange="{{ susHandlers.consQuien }}" placeholder="Liderazgo / RRHH" style="width:100%;padding:10px 13px;border:1.5px solid #DDE3EC;border-radius:8px;font-size:13px;font-family:'Open Sans',Arial,sans-serif;background:#FAFBFC;color:#1B2330" style-focus="border-color:#33B4D2;background:#fff;outline:none"/></div>
+              </div>
+
+              <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:12px;color:#1d6b28;text-transform:uppercase;letter-spacing:.5px;padding-bottom:6px;border-bottom:2px solid #31A540;margin-bottom:14px">4 · Sistemas y Procesos</div>
+              <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#041328">¿Qué cambios en sistemas anclan el cambio?</label><textarea value="{{ sustainFields.sis }}" onChange="{{ susHandlers.sis }}" placeholder="Ej: El sistema antiguo se desactiva en el Mes 2..." style="width:100%;min-height:70px;padding:10px 13px;border:1.5px solid #DDE3EC;border-radius:8px;font-size:13px;font-family:'Open Sans',Arial,sans-serif;background:#FAFBFC;color:#1B2330;resize:vertical" style-focus="border-color:#33B4D2;background:#fff;outline:none"></textarea></div>
+
+            </div>
+          </div>
+
+          <div style="background:#fff;border:1px solid #E7ECF3;border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(16,32,60,.05)">
+            <div style="padding:16px 22px;background:#041328;color:#3AEBFF;font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px">Timeline de Reforzamiento · 30 — 60 — 90 — 180 días</div>
+            <div style="padding:20px">
+              <div style="overflow-x:auto">
+                <table style="width:100%;border-collapse:collapse;font-size:12.5px;min-width:680px">
+                  <thead><tr>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">Hito</th>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">Actividad de reforzamiento</th>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">Responsable</th>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">Métrica de éxito</th>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">Fecha</th>
+                  </tr></thead>
+                  <tbody>
+                    <sc-for list="{{ timelineRows }}" as="r" hint-placeholder-count="4">
+                      <tr style="background:#fff">
+                        <td style="padding:8px 8px;border-bottom:1px solid #EEF2F7;font-weight:800;color:#1d6b28">{{ r.hito }}</td>
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><input value="{{ r.act }}" onChange="{{ r.onAct }}" placeholder="Ej: Revisión de KPIs" style="width:100%;padding:7px 9px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;font-family:'Open Sans',Arial,sans-serif;background:#fff" style-focus="border-color:#33B4D2;outline:none"/></td>
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><input value="{{ r.resp }}" onChange="{{ r.onResp }}" placeholder="Responsable" style="width:100%;padding:7px 9px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;font-family:'Open Sans',Arial,sans-serif;background:#fff" style-focus="border-color:#33B4D2;outline:none"/></td>
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><input value="{{ r.met }}" onChange="{{ r.onMet }}" placeholder="Ej: 60% adopción" style="width:100%;padding:7px 9px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;font-family:'Open Sans',Arial,sans-serif;background:#fff" style-focus="border-color:#33B4D2;outline:none"/></td>
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><input type="date" value="{{ r.fecha }}" onChange="{{ r.onFecha }}" style="width:138px;padding:7px 8px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;font-family:'Open Sans',Arial,sans-serif;background:#fff" style-focus="border-color:#33B4D2;outline:none"/></td>
+                      </tr>
+                    </sc-for>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isCierre }}" hint-placeholder-val="{{ true }}">
+        <div style="max-width:1080px;margin:0 auto">
+
+          <div style="background:#fff;border:1px solid #E7ECF3;border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(16,32,60,.05);margin-bottom:22px">
+            <div style="padding:16px 22px;background:linear-gradient(90deg,#1d6b28,#28863A);color:#fff;font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:space-between">
+              <span>Checklist de Cierre · Tier 3</span><span style="font-size:11px;opacity:.9;font-weight:600">{{ checkDone }}/{{ checkTotal }} completado</span>
+            </div>
+            <div style="padding:20px">
+              <div style="background:#E7ECF3;border-radius:6px;height:10px;overflow:hidden;margin-bottom:16px"><div style="height:100%;width:{{ checkPctW }};background:linear-gradient(90deg,#33B4D2,#31A540);border-radius:6px"></div></div>
+              <sc-for list="{{ checkRows }}" as="c" hint-placeholder-count="8">
+                <div onClick="{{ c.onToggle }}" style="display:flex;align-items:center;gap:12px;padding:10px;border-bottom:1px solid #F0F2F5;cursor:pointer" style-hover="background:#F7FAFD">
+                  <span style="width:20px;height:20px;border-radius:5px;border:2px solid {{ c.border }};background:{{ c.box }};flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:800">{{ c.mark }}</span>
+                  <span style="font-size:13px;color:#33425A">{{ c.label }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="background:#fff;border:1px solid #E7ECF3;border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(16,32,60,.05);margin-bottom:22px">
+            <div style="padding:16px 22px;background:#041328;color:#3AEBFF;font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px">Resultados Finales vs. Metas</div>
+            <div style="padding:20px">
+              <div style="overflow-x:auto">
+                <table style="width:100%;border-collapse:collapse;font-size:12.5px;min-width:560px">
+                  <thead><tr>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">KPI</th>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">Meta original</th>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">Resultado final</th>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">Estado</th>
+                    <th style="background:#041328;color:#fff;padding:10px;width:42px"></th>
+                  </tr></thead>
+                  <tbody>
+                    <sc-for list="{{ resultRows }}" as="r" hint-placeholder-count="1">
+                      <tr style="background:{{ r.rowBg }}">
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><input value="{{ r.kpi }}" onChange="{{ r.onKpi }}" placeholder="Ej: Tasa de adopción" style="width:100%;padding:7px 9px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;font-family:'Open Sans',Arial,sans-serif;background:#fff" style-focus="border-color:#33B4D2;outline:none"/></td>
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><input value="{{ r.meta }}" onChange="{{ r.onMeta }}" placeholder="Ej: 80%" style="width:100%;padding:7px 9px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;font-family:'Open Sans',Arial,sans-serif;background:#fff" style-focus="border-color:#33B4D2;outline:none"/></td>
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><input value="{{ r.resultado }}" onChange="{{ r.onResultado }}" placeholder="Ej: 84%" style="width:100%;padding:7px 9px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;font-family:'Open Sans',Arial,sans-serif;background:#fff" style-focus="border-color:#33B4D2;outline:none"/></td>
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><select value="{{ r.estado }}" onChange="{{ r.onEstado }}" style="width:100%;padding:7px 8px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;background:#fff;font-family:'Open Sans',Arial,sans-serif"><option>✓ Logrado</option><option>~ Parcial</option><option>✗ No logrado</option></select></td>
+                        <td style="text-align:center;border-bottom:1px solid #EEF2F7"><div onClick="{{ r.onDel }}" style="cursor:pointer;color:#A5202A;background:#fdecea;width:26px;height:26px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:12px" style-hover="background:#A5202A;color:#fff">✕</div></td>
+                      </tr>
+                    </sc-for>
+                  </tbody>
+                </table>
+              </div>
+              <div style="margin-top:14px"><div onClick="{{ addResultado }}" style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;border:2px solid #33B4D2;color:#1A8BA8;font-family:'Montserrat',sans-serif;font-weight:700;font-size:12.5px;padding:8px 15px;border-radius:8px" style-hover="background:#33B4D2;color:#fff">+ Agregar KPI</div></div>
+            </div>
+          </div>
+
+          <div style="background:#fff;border:1px solid #E7ECF3;border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(16,32,60,.05);margin-bottom:22px">
+            <div style="padding:16px 22px;background:#041328;color:#3AEBFF;font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px">Lecciones Aprendidas</div>
+            <div style="padding:20px">
+              <div style="overflow-x:auto">
+                <table style="width:100%;border-collapse:collapse;font-size:12.5px;min-width:560px">
+                  <thead><tr>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">¿Qué funcionó bien?</th>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">¿Qué haríamos diferente?</th>
+                    <th style="background:#041328;color:#fff;padding:10px;text-align:left;font-size:10.5px;font-family:'Montserrat',sans-serif;letter-spacing:.5px;text-transform:uppercase;font-weight:700">Recomendación</th>
+                    <th style="background:#041328;color:#fff;padding:10px;width:42px"></th>
+                  </tr></thead>
+                  <tbody>
+                    <sc-for list="{{ leccionRows }}" as="r" hint-placeholder-count="1">
+                      <tr style="background:#fff">
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><input value="{{ r.bien }}" onChange="{{ r.onBien }}" placeholder="Ej: La red de campeones fue clave" style="width:100%;padding:7px 9px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;font-family:'Open Sans',Arial,sans-serif;background:#fff" style-focus="border-color:#33B4D2;outline:none"/></td>
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><input value="{{ r.diferente }}" onChange="{{ r.onDiferente }}" placeholder="Ej: Iniciar CM 2 meses antes" style="width:100%;padding:7px 9px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;font-family:'Open Sans',Arial,sans-serif;background:#fff" style-focus="border-color:#33B4D2;outline:none"/></td>
+                        <td style="padding:6px;border-bottom:1px solid #EEF2F7"><input value="{{ r.rec }}" onChange="{{ r.onRec }}" placeholder="Ej: Siempre iniciar CM en diseño" style="width:100%;padding:7px 9px;border:1px solid #DDE3EC;border-radius:6px;font-size:12px;font-family:'Open Sans',Arial,sans-serif;background:#fff" style-focus="border-color:#33B4D2;outline:none"/></td>
+                        <td style="text-align:center;border-bottom:1px solid #EEF2F7"><div onClick="{{ r.onDel }}" style="cursor:pointer;color:#A5202A;background:#fdecea;width:26px;height:26px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:12px" style-hover="background:#A5202A;color:#fff">✕</div></td>
+                      </tr>
+                    </sc-for>
+                  </tbody>
+                </table>
+              </div>
+              <div style="margin-top:14px"><div onClick="{{ addLeccion }}" style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;border:2px solid #33B4D2;color:#1A8BA8;font-family:'Montserrat',sans-serif;font-weight:700;font-size:12.5px;padding:8px 15px;border-radius:8px" style-hover="background:#33B4D2;color:#fff">+ Agregar lección</div></div>
+            </div>
+          </div>
+
+          <div style="background:#fff;border:1px solid #E7ECF3;border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(16,32,60,.05)">
+            <div style="padding:16px 22px;background:#041328;color:#3AEBFF;font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px">Resumen y Certificación Final</div>
+            <div style="padding:22px">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+                <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#041328">Fecha de inicio del proyecto</label><input type="date" value="{{ cierreFields.inicio }}" onChange="{{ ciHandlers.inicio }}" style="width:100%;padding:10px 13px;border:1.5px solid #DDE3EC;border-radius:8px;font-size:13px;font-family:'Open Sans',Arial,sans-serif;background:#FAFBFC;color:#1B2330" style-focus="border-color:#33B4D2;background:#fff;outline:none"/></div>
+                <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#041328">Fecha oficial de cierre</label><input type="date" value="{{ cierreFields.fecha }}" onChange="{{ ciHandlers.fecha }}" style="width:100%;padding:10px 13px;border:1.5px solid #DDE3EC;border-radius:8px;font-size:13px;font-family:'Open Sans',Arial,sans-serif;background:#FAFBFC;color:#1B2330" style-focus="border-color:#33B4D2;background:#fff;outline:none"/></div>
+                <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#041328">Resultado general del proyecto</label><select value="{{ cierreFields.resultado }}" onChange="{{ ciHandlers.resultado }}" style="width:100%;padding:10px 13px;border:1.5px solid #DDE3EC;border-radius:8px;font-size:13px;background:#FAFBFC;font-family:'Open Sans',Arial,sans-serif"><option>Exitoso</option><option>Parcialmente exitoso</option><option>En proceso</option></select></div>
+                <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#041328">CM Lead responsable</label><input value="{{ cierreFields.lead }}" onChange="{{ ciHandlers.lead }}" placeholder="Tu nombre" style="width:100%;padding:10px 13px;border:1.5px solid #DDE3EC;border-radius:8px;font-size:13px;font-family:'Open Sans',Arial,sans-serif;background:#FAFBFC;color:#1B2330" style-focus="border-color:#33B4D2;background:#fff;outline:none"/></div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:20px"><label style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#041328">Comentarios finales del CM Lead</label><textarea value="{{ cierreFields.comentarios }}" onChange="{{ ciHandlers.comentarios }}" placeholder="Reflexión final sobre el proceso de cambio..." style="width:100%;min-height:74px;padding:10px 13px;border:1.5px solid #DDE3EC;border-radius:8px;font-size:13px;font-family:'Open Sans',Arial,sans-serif;background:#FAFBFC;color:#1B2330;resize:vertical" style-focus="border-color:#33B4D2;background:#fff;outline:none"></textarea></div>
+
+              <div style="background:#F7FAFD;border:1px solid #E7ECF3;border-radius:12px;padding:18px;margin-bottom:20px">
+                <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:12px;color:#041328;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Exportar todo lo capturado</div>
+                <div style="font-size:12.5px;color:#6C757D;margin-bottom:14px">Descarga un Excel con las 13 secciones del proyecto (editable) o genera un PDF.</div>
+                <div style="display:flex;gap:12px;flex-wrap:wrap">
+                  <div onClick="{{ exportExcel }}" style="cursor:pointer;background:linear-gradient(135deg,#1d6b28,#28863A);color:#fff;font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;padding:11px 20px;border-radius:9px;display:inline-flex;align-items:center;gap:8px" style-hover="filter:brightness(1.08)">⬇ Descargar Excel (.xlsx)</div>
+                  <div onClick="{{ printPage }}" style="cursor:pointer;background:#fff;border:1.5px solid #DDE3EC;color:#33425A;font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;padding:11px 20px;border-radius:9px;display:inline-flex;align-items:center;gap:8px" style-hover="border-color:#33B4D2;color:#1A8BA8">🖨 Imprimir / PDF</div>
+                </div>
+              </div>
+
+              <sc-if value="{{ allComplete }}" hint-placeholder-val="{{ false }}">
+                <div style="background:linear-gradient(135deg,#041328 0%,#0A1E36 50%,#122D4D 100%);color:#3AEBFF;text-align:center;padding:34px 24px;border-radius:14px;border:1px solid rgba(51,180,210,.3);box-shadow:0 8px 28px rgba(51,180,210,.16)">
+                  <div style="font-size:46px;margin-bottom:6px">🏆</div>
+                  <div style="font-family:'Montserrat',sans-serif;font-weight:900;font-size:16px;letter-spacing:.5px;color:#9DB6CC">CERTIFICACIÓN TIER 3 COMPLETADA</div>
+                  <div style="font-family:'Montserrat',sans-serif;font-weight:900;font-size:24px;letter-spacing:.5px;color:#3AEBFF;margin-top:8px">AGENTE DE CAMBIO CERTIFICADO</div>
+                  <div style="color:#9DB6CC;font-size:13px;margin-top:8px">{{ certName }} &nbsp;·&nbsp; {{ certEmpresa }} &nbsp;·&nbsp; Programa Agentes de Cambio G2G0526</div>
+                  <div style="color:#5E7A9A;font-size:11px;margin-top:10px">Grow2GetherMx — "Desaprende y transfórmate"</div>
+                </div>
+              </sc-if>
+              <sc-if value="{{ allNotComplete }}" hint-placeholder-val="{{ false }}">
+                <div style="background:#E6F6FB;border:1px solid #B6E2EE;border-left:4px solid #33B4D2;border-radius:0 12px 12px 0;padding:14px 18px;font-size:13px;color:#0A3242;line-height:1.5">Completa los tres Tiers (1, 2 y 3) para desbloquear tu certificación final como <strong>Agente de Cambio</strong>.</div>
+              </sc-if>
+            </div>
+          </div>
+
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isOther }}" hint-placeholder-val="{{ true }}">
+        <div style="max-width:620px;margin:36px auto 0">
+          <div style="background:#fff;border:1px solid #E7ECF3;border-radius:18px;padding:40px 36px;box-shadow:0 1px 3px rgba(16,32,60,.05);text-align:center">
+            <span style="display:inline-block;font-size:11px;font-weight:800;padding:4px 12px;border-radius:10px;background:{{ headerTierColor }};color:#fff;letter-spacing:.5px">{{ headerTier }}</span>
+            <div style="font-family:'Montserrat',sans-serif;font-weight:900;font-size:24px;color:#041328;margin:16px 0 10px">{{ headerTitle }}</div>
+            <div style="font-size:14px;color:#5A6B82;line-height:1.6;max-width:440px;margin:0 auto">{{ otherPurpose }}</div>
+            <div style="height:1px;background:#E7ECF3;margin:26px 0"></div>
+            <div style="font-size:13px;color:#6C757D;line-height:1.6;margin-bottom:20px">Esta pantalla se rediseñará con el mismo sistema visual e interacciones que <strong style="color:#041328">Análisis de Impacto</strong>. La construimos juntos cuando quieras.</div>
+            <div onClick="{{ goImpacto }}" style="display:inline-block;cursor:pointer;background:linear-gradient(135deg,#33B4D2,#1A8BA8);color:#fff;font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;padding:11px 20px;border-radius:9px" style-hover="filter:brightness(1.08)">Ver el ejemplo en Impacto →</div>
+          </div>
+        </div>
+      </sc-if>
+
+    </main>
+  </div>
+
+  <sc-if value="{{ showDbConfig }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;background:rgba(4,19,40,.55);display:flex;align-items:center;justify-content:center;z-index:50;padding:20px">
+      <div style="background:#fff;border-radius:16px;width:460px;max-width:100%;overflow:hidden;box-shadow:0 20px 60px rgba(4,19,40,.4)">
+        <div style="padding:16px 22px;background:linear-gradient(90deg,#041328,#0A1E36);color:#3AEBFF;font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:space-between"><span>Conexión a Base de Datos</span><span onClick="{{ closeDbConfig }}" style="cursor:pointer;color:#7FA0BC;font-size:18px">✕</span></div>
+        <div style="padding:22px">
+          <div style="background:#E6F6FB;border-left:3px solid #33B4D2;padding:10px 13px;border-radius:0 8px 8px 0;font-size:12px;color:#0A3242;line-height:1.5;margin-bottom:16px">Pega la <strong>URL</strong> y la <strong>anon key</strong> de tu proyecto Supabase. Se guardan en este navegador. Para publicar en Netlify, déjalas escritas en el archivo (constantes <strong>DB_URL</strong> / <strong>DB_KEY</strong>).</div>
+          <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px"><label style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#041328">Supabase URL</label><input value="{{ dbUrlInput }}" onChange="{{ onDbUrl }}" placeholder="https://xxxx.supabase.co" style="width:100%;padding:10px 13px;border:1.5px solid #DDE3EC;border-radius:8px;font-size:13px;font-family:'Open Sans',Arial,sans-serif;background:#FAFBFC" style-focus="border-color:#33B4D2;background:#fff;outline:none"/></div>
+          <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:18px"><label style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#041328">Anon Key (public)</label><input value="{{ dbKeyInput }}" onChange="{{ onDbKey }}" placeholder="eyJhbGciOiJI..." style="width:100%;padding:10px 13px;border:1.5px solid #DDE3EC;border-radius:8px;font-size:13px;font-family:'Open Sans',Arial,sans-serif;background:#FAFBFC" style-focus="border-color:#33B4D2;background:#fff;outline:none"/></div>
+          <div style="display:flex;gap:10px;justify-content:flex-end">
+            <div onClick="{{ closeDbConfig }}" style="cursor:pointer;padding:9px 16px;border-radius:8px;border:1.5px solid #DDE3EC;color:#6C757D;font-weight:700;font-size:13px;font-family:'Montserrat',sans-serif">Cancelar</div>
+            <div onClick="{{ saveDbConfig }}" style="cursor:pointer;padding:9px 16px;border-radius:8px;background:linear-gradient(135deg,#31A540,#28863A);color:#fff;font-weight:700;font-size:13px;font-family:'Montserrat',sans-serif">Conectar y guardar</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:760},&quot;initialView&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;resumen&quot;,&quot;proyecto&quot;,&quot;impacto&quot;],&quot;default&quot;:&quot;resumen&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;showTierProgress&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  // ====== CONFIG SUPABASE (opcional) ======
+  // Para publicar en Netlify con base de datos, pega aquí tu URL y anon key.
+  // También se pueden configurar desde el botón "Base de datos" en el encabezado.
+  DB_URL = '';
+  DB_KEY = '';
+  // =========================================
+  state = {
+    view: (this.props && this.props.initialView) || 'resumen',
+    dbConnected: false,
+    showDbConfig: false,
+    dbUrlInput: '',
+    dbKeyInput: '',
+    project: { participante:'', email:'', nombre:'', empresa:'', cmLead:'', sponsor:'', golive:'', personas:'', descripcion:'', grupos:'' },
+    impacto: [
+      { id:1, area:'Nómina', que:'Nuevo sistema de cálculo', tipo:'Tecnología', nivel:4, personas:'120', riesgo:'Alto' },
+      { id:2, area:'Atención a clientes', que:'Nuevo guion de servicio', tipo:'Proceso', nivel:3, personas:'45', riesgo:'Medio' }
+    ],
+    stakeholders: [
+      { id:1, nombre:'Directora de RRHH', area:'Capital Humano', poder:5, interes:4, actual:'A favor', meta:'Promotor' },
+      { id:2, nombre:'Gerente de Operaciones', area:'Operaciones', poder:4, interes:2, actual:'Resistente', meta:'A favor' },
+      { id:3, nombre:'Líder Sindical', area:'Planta', poder:3, interes:5, actual:'Neutral', meta:'A favor' }
+    ],
+    mitig: [
+      { id:1, impacto:'Alta rotación por incertidumbre', accion:'Sesiones Q&A semanales con líderes', resp:'CM Lead', fecha:'', prioridad:'Alta', estatus:'En proceso' },
+      { id:2, impacto:'Resistencia en Operaciones', accion:'1:1 con Gerente + plan WIIFM', resp:'RRHH', fecha:'', prioridad:'Media', estatus:'Pendiente' }
+    ],
+    mensajes: { que:'', porque:'', paraTi:'' },
+    comms: [
+      { id:1, aud:'Directores', msg:'Avance y compromiso ejecutivo', canal:'Town Hall', freq:'Por hito', resp:'Sponsor', fecha:'Jun 2026', estatus:'Planeado' },
+      { id:2, aud:'Operativos', msg:'Qué cambia en tu día a día', canal:'Reunión', freq:'Semanal', resp:'Supervisores', fecha:'Jul 2026', estatus:'Planeado' }
+    ],
+    wiifm: { dir:'', ger:'', sup:'', op:'' },
+    train: [
+      { id:1, grupo:'Supervisores', saber:'Nuevo proceso', hacer:'Capturar en sistema', modalidad:'Presencial', dur:'4 hrs', fecha:'', resp:'Facilitador interno', evalText:'Quiz + práctica', estatus:'Por diseñar' },
+      { id:2, grupo:'Operativos', saber:'Uso de la herramienta', hacer:'Registrar operaciones', modalidad:'OJT', dur:'2 hrs', fecha:'', resp:'Líder de área', evalText:'Observación', estatus:'Por diseñar' }
+    ],
+    kpis: {
+      rows: [
+        { label:'Awareness', como:'Encuesta semanal', base:'0', m30:'60', m60:'80', m90:'90' },
+        { label:'Desire', como:'Encuesta engagement', base:'0', m30:'50', m60:'70', m90:'80' },
+        { label:'Knowledge', como:'LMS / asistencia', base:'0', m30:'40', m60:'80', m90:'90' },
+        { label:'Ability', como:'Observación / KPI op.', base:'0', m30:'30', m60:'65', m90:'80' },
+        { label:'Reinforcement', como:'Auditoría / adherencia', base:'0', m30:'20', m60:'55', m90:'75' }
+      ],
+      negocio:'', meta:'', resp:'', freq:'Mensual'
+    },
+    sustain: {
+      accQuien:'', accMec:'', accFreq:'Mensual',
+      recComo:'', recQuien:'', recCriterios:'',
+      consQue:'', consQuien:'', sis:'',
+      timeline: [
+        { hito:'Día 30', act:'Revisión de KPIs de adopción', resp:'', met:'60% awareness', fecha:'' },
+        { hito:'Día 60', act:'Pulso de adopción', resp:'', met:'', fecha:'' },
+        { hito:'Día 90', act:'Evaluación Kirkpatrick L3', resp:'', met:'', fecha:'' },
+        { hito:'Día 180', act:'Reporte de sostenibilidad', resp:'', met:'', fecha:'' }
+      ]
+    },
+    cierre: {
+      checklist: [
+        { id:1, label:'Manual del proceso/sistema actualizado', done:false },
+        { id:2, label:'Lista de usuarios capacitados documentada', done:false },
+        { id:3, label:'Reporte de adopción final (métricas vs. metas)', done:false },
+        { id:4, label:'Issues pendientes documentados y asignados', done:false },
+        { id:5, label:'Lecciones aprendidas documentadas', done:false },
+        { id:6, label:'Plan de soporte post-implementación definido', done:false },
+        { id:7, label:'Mapa de stakeholders actualizado', done:false },
+        { id:8, label:'Comunicación oficial de cierre enviada', done:false }
+      ],
+      resultados: [ { id:1, kpi:'Tasa de adopción', meta:'80%', resultado:'', estado:'~ Parcial' } ],
+      lecciones: [ { id:1, bien:'La red de campeones fue clave', diferente:'Iniciar CM antes', rec:'Siempre iniciar CM en diseño' } ],
+      inicio:'', fecha:'', resultado:'Exitoso', lead:'', comentarios:''
+    }
+  };
+
+  setView(v){ this.setState({ view:v }); }
+  updateProject(field, val){ this.setState(s => ({ project: { ...s.project, [field]: val } })); }
+  updateImpacto(id, field, val){ this.setState(s => ({ impacto: s.impacto.map(r => r.id===id ? { ...r, [field]:val } : r) })); }
+  addImpacto(){ this.setState(s => ({ impacto: [...s.impacto, { id:Date.now(), area:'', que:'', tipo:'Personas', nivel:3, personas:'', riesgo:'Medio' }] })); }
+  delImpacto(id){ this.setState(s => ({ impacto: s.impacto.filter(r => r.id!==id) })); }
+  updateStakeholder(id, field, val){ this.setState(s => ({ stakeholders: s.stakeholders.map(r => r.id===id ? { ...r, [field]:val } : r) })); }
+  addStakeholder(){ this.setState(s => ({ stakeholders: [...s.stakeholders, { id:Date.now(), nombre:'', area:'', poder:3, interes:3, actual:'Neutral', meta:'A favor' }] })); }
+  delStakeholder(id){ this.setState(s => ({ stakeholders: s.stakeholders.filter(r => r.id!==id) })); }
+  updateMitig(id, field, val){ this.setState(s => ({ mitig: s.mitig.map(r => r.id===id ? { ...r, [field]:val } : r) })); }
+  addMitig(){ this.setState(s => ({ mitig: [...s.mitig, { id:Date.now(), impacto:'', accion:'', resp:'', fecha:'', prioridad:'Media', estatus:'Pendiente' }] })); }
+  delMitig(id){ this.setState(s => ({ mitig: s.mitig.filter(r => r.id!==id) })); }
+  updateMensaje(key, val){ this.setState(s => ({ mensajes: { ...s.mensajes, [key]:val } })); }
+  updateComms(id, field, val){ this.setState(s => ({ comms: s.comms.map(r => r.id===id ? { ...r, [field]:val } : r) })); }
+  addComms(){ this.setState(s => ({ comms: [...s.comms, { id:Date.now(), aud:'', msg:'', canal:'Email', freq:'Único', resp:'', fecha:'', estatus:'Planeado' }] })); }
+  delComms(id){ this.setState(s => ({ comms: s.comms.filter(r => r.id!==id) })); }
+  updateWiifm(key, val){ this.setState(s => ({ wiifm: { ...s.wiifm, [key]:val } })); }
+  updateTrain(id, field, val){ this.setState(s => ({ train: s.train.map(r => r.id===id ? { ...r, [field]:val } : r) })); }
+  addTrain(){ this.setState(s => ({ train: [...s.train, { id:Date.now(), grupo:'', saber:'', hacer:'', modalidad:'Presencial', dur:'', fecha:'', resp:'', evalText:'', estatus:'Por diseñar' }] })); }
+  delTrain(id){ this.setState(s => ({ train: s.train.filter(r => r.id!==id) })); }
+  updateKpi(idx, field, val){ this.setState(s => ({ kpis: { ...s.kpis, rows: s.kpis.rows.map((r,i) => i===idx ? { ...r, [field]:val } : r) } })); }
+  updateKpiMeta(field, val){ this.setState(s => ({ kpis: { ...s.kpis, [field]:val } })); }
+  updateSustain(field, val){ this.setState(s => ({ sustain: { ...s.sustain, [field]:val } })); }
+  updateTimeline(idx, field, val){ this.setState(s => ({ sustain: { ...s.sustain, timeline: s.sustain.timeline.map((r,i) => i===idx ? { ...r, [field]:val } : r) } })); }
+  toggleCheck(id){ this.setState(s => ({ cierre: { ...s.cierre, checklist: s.cierre.checklist.map(c => c.id===id ? { ...c, done:!c.done } : c) } })); }
+  updateCierre(field, val){ this.setState(s => ({ cierre: { ...s.cierre, [field]:val } })); }
+  updateResultado(id, field, val){ this.setState(s => ({ cierre: { ...s.cierre, resultados: s.cierre.resultados.map(r => r.id===id ? { ...r, [field]:val } : r) } })); }
+  addResultado(){ this.setState(s => ({ cierre: { ...s.cierre, resultados: [...s.cierre.resultados, { id:Date.now(), kpi:'', meta:'', resultado:'', estado:'~ Parcial' }] } })); }
+  delResultado(id){ this.setState(s => ({ cierre: { ...s.cierre, resultados: s.cierre.resultados.filter(r => r.id!==id) } })); }
+  updateLeccion(id, field, val){ this.setState(s => ({ cierre: { ...s.cierre, lecciones: s.cierre.lecciones.map(r => r.id===id ? { ...r, [field]:val } : r) } })); }
+  addLeccion(){ this.setState(s => ({ cierre: { ...s.cierre, lecciones: [...s.cierre.lecciones, { id:Date.now(), bien:'', diferente:'', rec:'' }] } })); }
+  delLeccion(id){ this.setState(s => ({ cierre: { ...s.cierre, lecciones: s.cierre.lecciones.filter(r => r.id!==id) } })); }
+
+  // ====== PERSISTENCIA / DB / EXPORT ======
+  buildPayload(){
+    const s = this.state;
+    return { project:s.project, impacto:s.impacto, stakeholders:s.stakeholders, mitig:s.mitig, mensajes:s.mensajes, comms:s.comms, wiifm:s.wiifm, train:s.train, kpis:s.kpis, sustain:s.sustain, cierre:s.cierre };
+  }
+  _init(){
+    try {
+      const raw = localStorage.getItem('g2g_cm_data');
+      if(raw){ const sv = JSON.parse(raw); const patch = {}; ['project','impacto','stakeholders','mitig','mensajes','comms','wiifm','train','kpis','sustain','cierre'].forEach(k => { if(sv[k] !== undefined) patch[k] = sv[k]; }); this.setState(patch); }
+    } catch(e){}
+    let url='', key='';
+    try { url = (localStorage.getItem('g2g_db_url')||this.DB_URL||'').trim(); key = (localStorage.getItem('g2g_db_key')||this.DB_KEY||'').trim(); } catch(e){ url=this.DB_URL; key=this.DB_KEY; }
+    if(url || key) this.setState({ dbUrlInput:url, dbKeyInput:key });
+    this._dbTries = 0;
+    this.connectDb(url, key);
+    this._ready = true;
+  }
+  _maybePersist(){
+    if(!this._ready) return;
+    let json;
+    try { json = JSON.stringify(this.buildPayload()); } catch(e){ return; }
+    if(json === this._lastSave) return;
+    this._lastSave = json;
+    try { localStorage.setItem('g2g_cm_data', json); } catch(e){}
+    clearTimeout(this._dbT); this._dbT = setTimeout(() => this.saveToDb(), 1500);
+  }
+  connectDb(url, key){
+    if(!url || !key){ this.setState({ dbConnected:false }); return; }
+    if(!window.supabase){ if(this._dbTries < 12){ this._dbTries++; setTimeout(() => this.connectDb(url, key), 600); } return; }
+    try { this.DB = window.supabase.createClient(url, key); this.setState({ dbConnected:true }); this.saveToDb(); }
+    catch(e){ console.warn('Supabase:', e.message); this.setState({ dbConnected:false }); }
+  }
+  async saveToDb(){
+    if(!this.DB) return;
+    const p = this.state.project;
+    try {
+      await this.DB.from('cm_submissions').upsert({
+        email: (p.email||'sin-email').toLowerCase(), proyecto: p.nombre||'sin-nombre',
+        participante: p.participante||'', empresa: p.empresa||'', tier_actual: this.state.view,
+        payload: this.buildPayload(), updated_at: new Date().toISOString()
+      }, { onConflict: 'email,proyecto' });
+    } catch(e){ console.warn('DB save:', e.message); }
+  }
+  openDbConfig(){ this.setState({ showDbConfig:true }); }
+  closeDbConfig(){ this.setState({ showDbConfig:false }); }
+  saveDbConfig(){
+    const url=(this.state.dbUrlInput||'').trim(), key=(this.state.dbKeyInput||'').trim();
+    try { localStorage.setItem('g2g_db_url', url); localStorage.setItem('g2g_db_key', key); } catch(e){}
+    this._dbTries = 0; this.connectDb(url, key); this.setState({ showDbConfig:false });
+  }
+  exportExcel(){
+    const X = window.XLSX;
+    if(!X){ alert('La librería de Excel aún se está cargando. Espera unos segundos e intenta de nuevo.'); return; }
+    const s = this.state, p = s.project, wb = X.utils.book_new();
+    const add = (name, aoa) => X.utils.book_append_sheet(wb, X.utils.aoa_to_sheet(aoa), name);
+    add('Proyecto', [['Campo','Valor'],['Participante',p.participante],['Email',p.email],['Proyecto',p.nombre],['Empresa',p.empresa],['CM Lead',p.cmLead],['Sponsor',p.sponsor],['Go-Live',p.golive],['Personas impactadas',p.personas],['Descripción',p.descripcion],['Grupos impactados',p.grupos]]);
+    add('Impacto', [['Área/Proceso','¿Qué cambia?','Tipo','Impacto (1-5)','Personas','Riesgo'], ...s.impacto.map(r=>[r.area,r.que,r.tipo,r.nivel,r.personas,r.riesgo])]);
+    add('Stakeholders', [['Nombre/Rol','Área','Poder','Interés','Posición actual','Meta'], ...s.stakeholders.map(r=>[r.nombre,r.area,r.poder,r.interes,r.actual,r.meta])]);
+    add('Mitigación', [['Impacto/Riesgo','Acción','Responsable','Fecha','Prioridad','Estatus'], ...s.mitig.map(r=>[r.impacto,r.accion,r.resp,r.fecha,r.prioridad,r.estatus])]);
+    add('Mensajes clave', [['Mensaje','Contenido'],['¿QUÉ cambia?',s.mensajes.que],['¿POR QUÉ cambia?',s.mensajes.porque],['¿QUÉ significa PARA TI?',s.mensajes.paraTi]]);
+    add('Comunicación', [['#','Audiencia','Mensaje clave','Canal','Frecuencia','Responsable','Fecha/Mes','Estatus'], ...s.comms.map((r,i)=>[i+1,r.aud,r.msg,r.canal,r.freq,r.resp,r.fecha,r.estatus])]);
+    add('WIIFM', [['Nivel','Mensaje'],['Directivos',s.wiifm.dir],['Gerentes',s.wiifm.ger],['Supervisores',s.wiifm.sup],['Operativos',s.wiifm.op]]);
+    add('Entrenamiento', [['Grupo','¿Qué saber?','¿Qué hacer?','Modalidad','Duración','Fecha','Responsable','Evaluación','Estatus'], ...s.train.map(r=>[r.grupo,r.saber,r.hacer,r.modalidad,r.dur,r.fecha,r.resp,r.evalText,r.estatus])]);
+    add('KPIs ADKAR', [['ADKAR','¿Cómo medir?','Base %','30d %','60d %','90d %'], ...s.kpis.rows.map(r=>[r.label,r.como,r.base,r.m30,r.m60,r.m90]), [], ['KPI de negocio',s.kpis.negocio],['Meta',s.kpis.meta],['Responsable',s.kpis.resp],['Frecuencia',s.kpis.freq]]);
+    const su=s.sustain;
+    add('Sustain', [['Palanca','Detalle'],['Accountability — quién',su.accQuien],['Accountability — mecanismo',su.accMec],['Accountability — frecuencia',su.accFreq],['Reconocimiento — cómo',su.recComo],['Reconocimiento — quién',su.recQuien],['Reconocimiento — criterios',su.recCriterios],['Consecuencias — qué',su.consQue],['Consecuencias — quién',su.consQuien],['Sistemas y procesos',su.sis],[], ['Hito','Actividad','Responsable','Métrica','Fecha'], ...su.timeline.map(t=>[t.hito,t.act,t.resp,t.met,t.fecha])]);
+    const ci=s.cierre;
+    add('Cierre', [['Checklist','Completado'], ...ci.checklist.map(c=>[c.label, c.done?'Sí':'No']), [], ['Inicio',ci.inicio],['Cierre',ci.fecha],['Resultado general',ci.resultado],['CM Lead',ci.lead],['Comentarios',ci.comentarios]]);
+    add('Resultados', [['KPI','Meta original','Resultado final','Estado'], ...ci.resultados.map(r=>[r.kpi,r.meta,r.resultado,r.estado])]);
+    add('Lecciones', [['¿Qué funcionó bien?','¿Qué cambiaríamos?','Recomendación'], ...ci.lecciones.map(r=>[r.bien,r.diferente,r.rec])]);
+    const fname = 'CM_' + ((p.nombre||'Proyecto').replace(/[^\w]+/g,'_').substring(0,40)) + '.xlsx';
+    X.writeFile(wb, fname);
+  }
+  printPage(){ window.print(); }
+
+  renderVals(){
+    if(!this._inited){ this._inited = true; setTimeout(() => this._init(), 0); }
+    const p = this.state.project;
+    const view = this.state.view;
+    const rows = this.state.impacto;
+    const niv = ['','Mínimo','Bajo','Medio','Alto','Crítico'];
+    const filled = rows.filter(r => (r.area||'').trim()).length;
+    const totalP = rows.reduce((s,r) => s + (parseInt(r.personas)||0), 0);
+    const altos = rows.filter(r => r.nivel>=4).length;
+    const nRisk = rows.filter(r => r.riesgo==='Alto').length;
+    const tipos = {}; rows.forEach(r => { if((r.area||'').trim()) tipos[r.tipo] = (tipos[r.tipo]||0)+1; });
+    const tipoKeys = Object.keys(tipos);
+    const tipoMax = tipoKeys.length ? tipoKeys.reduce((a,b) => tipos[a]>=tipos[b]?a:b) : '—';
+
+    let sem, semColor, semBg;
+    if(filled===0){ sem='Sin datos'; semColor='#6C757D'; semBg='#F0F2F5'; }
+    else if(nRisk > rows.length/2){ sem='Riesgo Alto'; semColor='#A5202A'; semBg='#fdecea'; }
+    else if(altos>0){ sem='Riesgo Medio'; semColor='#c47000'; semBg='#fff8e1'; }
+    else { sem='Riesgo Bajo'; semColor='#28863A'; semBg='#e8f5e9'; }
+
+    const tipoOptsTxt = tipoMax;
+    const nextSteps = [];
+    if(altos>0) nextSteps.push('Prioriza el mapeo de stakeholders en las áreas con impacto Alto/Crítico.');
+    nextSteps.push('Diseña mensajes diferenciados para las ' + totalP.toLocaleString('es-MX') + ' personas impactadas.');
+    nextSteps.push('Construye el plan de entrenamiento para el impacto tipo ' + tipoOptsTxt + '.');
+    nextSteps.push('Valida con el sponsor ' + (p.sponsor ? p.sponsor : '(por definir)') + ' para asegurar recursos.');
+
+    const impactoRows = rows.map(r => ({
+      id:r.id, area:r.area, que:r.que, tipo:r.tipo, nivel:r.nivel, personas:r.personas, riesgo:r.riesgo,
+      rowBg: r.nivel>=4 ? '#FDEEEF' : (r.nivel>=3 ? '#FFF8E8' : '#F2F9F3'),
+      onArea: e => this.updateImpacto(r.id,'area',e.target.value),
+      onQue: e => this.updateImpacto(r.id,'que',e.target.value),
+      onTipo: e => this.updateImpacto(r.id,'tipo',e.target.value),
+      onNivel: e => this.updateImpacto(r.id,'nivel',parseInt(e.target.value)||3),
+      onPersonas: e => this.updateImpacto(r.id,'personas',e.target.value),
+      onRiesgo: e => this.updateImpacto(r.id,'riesgo',e.target.value),
+      onDel: () => this.delImpacto(r.id)
+    }));
+
+    // ---- Stakeholders computed ----
+    const sks = this.state.stakeholders;
+    const skTotal = sks.filter(s => (s.nombre||'').trim()).length;
+    const posColor = pos => pos==='A favor' ? '#31A540' : pos==='Resistente' ? '#A5202A' : pos==='Desconocida' ? '#8195AC' : '#6C757D';
+    const bucket = s => (s.poder>=3?'alto':'bajo') + '-' + (s.interes>=3?'alto':'bajo');
+    const estrategiaDe = b => b==='alto-alto' ? 'Gestionar de cerca' : b==='alto-bajo' ? 'Mantener satisfechos' : b==='bajo-alto' ? 'Mantener informados' : 'Monitorear';
+    const skRows = sks.map(s => ({
+      id:s.id, nombre:s.nombre, area:s.area, poder:String(s.poder), interes:String(s.interes), actual:s.actual, meta:s.meta,
+      estrategia: estrategiaDe(bucket(s)),
+      onNombre: e => this.updateStakeholder(s.id,'nombre',e.target.value),
+      onArea: e => this.updateStakeholder(s.id,'area',e.target.value),
+      onPoder: e => this.updateStakeholder(s.id,'poder',parseInt(e.target.value)||3),
+      onInteres: e => this.updateStakeholder(s.id,'interes',parseInt(e.target.value)||3),
+      onActual: e => this.updateStakeholder(s.id,'actual',e.target.value),
+      onMeta: e => this.updateStakeholder(s.id,'meta',e.target.value),
+      onDel: () => this.delStakeholder(s.id)
+    }));
+    const cellDefs = [
+      { key:'alto-bajo', title:'Mantener satisfechos', sub:'Alto poder · Bajo interés', accent:'#E08A00', bg:'#FFF8E8' },
+      { key:'alto-alto', title:'Gestionar de cerca', sub:'Alto poder · Alto interés', accent:'#A5202A', bg:'#FDEEEF' },
+      { key:'bajo-bajo', title:'Monitorear', sub:'Bajo poder · Bajo interés', accent:'#8195AC', bg:'#F2F5F9' },
+      { key:'bajo-alto', title:'Mantener informados', sub:'Bajo poder · Alto interés', accent:'#1A8BA8', bg:'#E6F6FB' }
+    ];
+    const skCells = cellDefs.map(c => ({
+      key:c.key, title:c.title, sub:c.sub, accent:c.accent, bg:c.bg,
+      chips: sks.filter(s => (s.nombre||'').trim() && bucket(s)===c.key).map(s => ({ name:s.nombre, chipColor:posColor(s.actual) }))
+    }));
+    const skResist = sks.filter(s => s.actual==='Resistente' && (s.nombre||'').trim()).map(s => ({ id:s.id, nombre:s.nombre, area:s.area||'—' }));
+    const skResistN = skResist.length;
+    const skPromN = sks.filter(s => s.meta==='Promotor' && (s.nombre||'').trim()).length;
+
+    // ---- Mitigación computed ----
+    const mits = this.state.mitig;
+    const mns = this.state.mensajes;
+    const mitigFilled = mits.filter(r => (r.accion||'').trim() || (r.impacto||'').trim()).length;
+    const priColor = pr => pr==='Alta' ? '#A5202A' : pr==='Media' ? '#c47000' : '#28863A';
+    const priBg = pr => pr==='Alta' ? '#fdecea' : pr==='Media' ? '#fff8e1' : '#e8f5e9';
+    const stColor = st => st==='Completado' ? '#28863A' : st==='En proceso' ? '#c47000' : '#6C757D';
+    const stBg = st => st==='Completado' ? '#e8f5e9' : st==='En proceso' ? '#fff8e1' : '#F0F2F5';
+    const mitigRows = mits.map(r => ({
+      id:r.id, impacto:r.impacto, accion:r.accion, resp:r.resp, fecha:r.fecha, prioridad:r.prioridad, estatus:r.estatus,
+      priColor: priColor(r.prioridad), priBg: priBg(r.prioridad),
+      stColor: stColor(r.estatus), stBg: stBg(r.estatus),
+      onImpacto: e => this.updateMitig(r.id,'impacto',e.target.value),
+      onAccion: e => this.updateMitig(r.id,'accion',e.target.value),
+      onResp: e => this.updateMitig(r.id,'resp',e.target.value),
+      onFecha: e => this.updateMitig(r.id,'fecha',e.target.value),
+      onPrioridad: e => this.updateMitig(r.id,'prioridad',e.target.value),
+      onEstatus: e => this.updateMitig(r.id,'estatus',e.target.value),
+      onDel: () => this.delMitig(r.id)
+    }));
+    const mitTotal = mitigFilled;
+    const mitDone = mits.filter(r => r.estatus==='Completado').length;
+    const mitProc = mits.filter(r => r.estatus==='En proceso').length;
+    const mitAlta = mits.filter(r => r.prioridad==='Alta').length;
+    const msgFields = [
+      { num:'1', accent:'#1A8BA8', accentBg:'#E6F6FB', label:'¿QUÉ cambia?', sub:'Descripción objetiva', value:mns.que, ph:'Describe de forma clara qué cambia en procesos, sistemas o roles...', onChange: e => this.updateMensaje('que', e.target.value) },
+      { num:'2', accent:'#c47000', accentBg:'#FFF8E8', label:'¿POR QUÉ cambia?', sub:'Razón de negocio y beneficios', value:mns.porque, ph:'Explica la razón estratégica y los beneficios esperados...', onChange: e => this.updateMensaje('porque', e.target.value) },
+      { num:'3', accent:'#28863A', accentBg:'#E8F5E9', label:'¿QUÉ significa PARA TI?', sub:'Personaliza por audiencia', value:mns.paraTi, ph:'Impacto en las personas: qué ganan, qué cambia en su día a día...', onChange: e => this.updateMensaje('paraTi', e.target.value) }
+    ];
+
+    // ---- Comunicación computed ----
+    const cms = this.state.comms;
+    const commsFilled = cms.filter(r => (r.aud||'').trim() || (r.msg||'').trim()).length;
+    const commsRows = cms.map((r, i) => ({
+      num:i+1, id:r.id, aud:r.aud, msg:r.msg, canal:r.canal, freq:r.freq, resp:r.resp, fecha:r.fecha, estatus:r.estatus,
+      onAud: e => this.updateComms(r.id,'aud',e.target.value),
+      onMsg: e => this.updateComms(r.id,'msg',e.target.value),
+      onCanal: e => this.updateComms(r.id,'canal',e.target.value),
+      onFreq: e => this.updateComms(r.id,'freq',e.target.value),
+      onResp: e => this.updateComms(r.id,'resp',e.target.value),
+      onFecha: e => this.updateComms(r.id,'fecha',e.target.value),
+      onEstatus: e => this.updateComms(r.id,'estatus',e.target.value),
+      onDel: () => this.delComms(r.id)
+    }));
+    const wf = this.state.wiifm;
+    const wiifmFields = [
+      { key:'dir', label:'Directivos', value:wf.dir, ph:'ROI, eficiencia, cumplimiento...', onChange: e => this.updateWiifm('dir', e.target.value) },
+      { key:'ger', label:'Gerentes', value:wf.ger, ph:'Mejor gestión del equipo...', onChange: e => this.updateWiifm('ger', e.target.value) },
+      { key:'sup', label:'Supervisores', value:wf.sup, ph:'Procesos más claros, menos errores...', onChange: e => this.updateWiifm('sup', e.target.value) },
+      { key:'op', label:'Operativos', value:wf.op, ph:'Mejores herramientas, menos fricciones...', onChange: e => this.updateWiifm('op', e.target.value) }
+    ];
+
+    // ---- Entrenamiento computed ----
+    const trs = this.state.train;
+    const trainFilled = trs.filter(r => (r.grupo||'').trim()).length;
+    const trainRows = trs.map(r => ({
+      id:r.id, grupo:r.grupo, saber:r.saber, hacer:r.hacer, modalidad:r.modalidad, dur:r.dur, fecha:r.fecha, resp:r.resp, evalText:r.evalText, estatus:r.estatus,
+      onGrupo: e => this.updateTrain(r.id,'grupo',e.target.value),
+      onSaber: e => this.updateTrain(r.id,'saber',e.target.value),
+      onHacer: e => this.updateTrain(r.id,'hacer',e.target.value),
+      onModalidad: e => this.updateTrain(r.id,'modalidad',e.target.value),
+      onDur: e => this.updateTrain(r.id,'dur',e.target.value),
+      onFecha: e => this.updateTrain(r.id,'fecha',e.target.value),
+      onResp: e => this.updateTrain(r.id,'resp',e.target.value),
+      onEval: e => this.updateTrain(r.id,'evalText',e.target.value),
+      onEstatus: e => this.updateTrain(r.id,'estatus',e.target.value),
+      onDel: () => this.delTrain(r.id)
+    }));
+    const trainGroups = trainFilled;
+    const modCount = {}; trs.forEach(r => { if((r.grupo||'').trim()) modCount[r.modalidad] = (modCount[r.modalidad]||0)+1; });
+    const trainMods = Object.keys(modCount).map(k => ({ name:k, n:modCount[k] }));
+
+    // ---- KPIs computed ----
+    const kp = this.state.kpis;
+    const kpiFilled = kp.rows.some(r => (''+(r.base||'')).trim() || (''+(r.m90||'')).trim()) || (kp.negocio||'').trim().length>0;
+    const adkarRows = kp.rows.map((r, i) => {
+      const base = parseFloat(r.base)||0, meta = parseFloat(r.m90)||0;
+      const pct = meta>0 ? Math.max(0, Math.min(100, Math.round(base/meta*100))) : 0;
+      return {
+        idx:i, label:r.label, como:r.como, base:r.base, m30:r.m30, m60:r.m60, m90:r.m90,
+        pctW: pct + '%',
+        onComo: e => this.updateKpi(i,'como',e.target.value),
+        onBase: e => this.updateKpi(i,'base',e.target.value),
+        onM30: e => this.updateKpi(i,'m30',e.target.value),
+        onM60: e => this.updateKpi(i,'m60',e.target.value),
+        onM90: e => this.updateKpi(i,'m90',e.target.value)
+      };
+    });
+    const kpiNegocio = kp.negocio, kpiMeta = kp.meta, kpiResp = kp.resp, kpiFreq = kp.freq;
+    const onKpiNegocio = e => this.updateKpiMeta('negocio', e.target.value);
+    const onKpiMeta = e => this.updateKpiMeta('meta', e.target.value);
+    const onKpiResp = e => this.updateKpiMeta('resp', e.target.value);
+    const onKpiFreq = e => this.updateKpiMeta('freq', e.target.value);
+
+    const tier2Complete = commsFilled>0 && trainFilled>0 && kpiFilled;
+    const tier2Checks = [
+      { name:'Plan de Comunicación', done: commsFilled>0 },
+      { name:'Plan de Entrenamiento', done: trainFilled>0 },
+      { name:'Dashboard de KPIs', done: kpiFilled }
+    ].map(c => ({ name:c.name, done:c.done, dotColor: c.done ? '#31A540' : '#C3CEDD', dotBg: c.done ? '#31A540' : 'transparent' }));
+
+    // ---- Sustain computed ----
+    const su = this.state.sustain;
+    const susFilled = (su.accQuien||'').trim() || (su.sis||'').trim() || su.timeline.some(t => (t.act||'').trim() && (t.resp||'').trim());
+    const sustainFields = {
+      accQuien: su.accQuien, accMec: su.accMec, accFreq: su.accFreq,
+      recComo: su.recComo, recQuien: su.recQuien, recCriterios: su.recCriterios,
+      consQue: su.consQue, consQuien: su.consQuien, sis: su.sis
+    };
+    const onSus = field => e => this.updateSustain(field, e.target.value);
+    const susHandlers = {
+      accQuien:onSus('accQuien'), accMec:onSus('accMec'), accFreq:onSus('accFreq'),
+      recComo:onSus('recComo'), recQuien:onSus('recQuien'), recCriterios:onSus('recCriterios'),
+      consQue:onSus('consQue'), consQuien:onSus('consQuien'), sis:onSus('sis')
+    };
+    const timelineRows = su.timeline.map((t, i) => ({
+      hito:t.hito, act:t.act, resp:t.resp, met:t.met, fecha:t.fecha,
+      onAct: e => this.updateTimeline(i,'act',e.target.value),
+      onResp: e => this.updateTimeline(i,'resp',e.target.value),
+      onMet: e => this.updateTimeline(i,'met',e.target.value),
+      onFecha: e => this.updateTimeline(i,'fecha',e.target.value)
+    }));
+
+    // ---- Cierre computed ----
+    const ci = this.state.cierre;
+    const checkRows = ci.checklist.map(c => ({
+      id:c.id, label:c.label, done:c.done,
+      box: c.done ? '#31A540' : '#fff', border: c.done ? '#31A540' : '#C3CEDD', mark: c.done ? '✓' : '',
+      onToggle: () => this.toggleCheck(c.id)
+    }));
+    const checkDone = ci.checklist.filter(c => c.done).length;
+    const checkPct = Math.round(checkDone / ci.checklist.length * 100);
+    const resultRows = ci.resultados.map(r => ({
+      id:r.id, kpi:r.kpi, meta:r.meta, resultado:r.resultado, estado:r.estado,
+      rowBg: r.estado.indexOf('Logrado')>=0 ? '#e8f5e9' : r.estado.indexOf('Parcial')>=0 ? '#fff8e1' : '#fdecea',
+      onKpi: e => this.updateResultado(r.id,'kpi',e.target.value),
+      onMeta: e => this.updateResultado(r.id,'meta',e.target.value),
+      onResultado: e => this.updateResultado(r.id,'resultado',e.target.value),
+      onEstado: e => this.updateResultado(r.id,'estado',e.target.value),
+      onDel: () => this.delResultado(r.id)
+    }));
+    const leccionRows = ci.lecciones.map(r => ({
+      id:r.id, bien:r.bien, diferente:r.diferente, rec:r.rec,
+      onBien: e => this.updateLeccion(r.id,'bien',e.target.value),
+      onDiferente: e => this.updateLeccion(r.id,'diferente',e.target.value),
+      onRec: e => this.updateLeccion(r.id,'rec',e.target.value),
+      onDel: () => this.delLeccion(r.id)
+    }));
+    const cierreFilled = checkDone>0 || ci.resultados.some(r => (r.kpi||'').trim()) || (ci.comentarios||'').trim().length>0;
+    const cierreFields = { inicio:ci.inicio, fecha:ci.fecha, resultado:ci.resultado, lead:ci.lead, comentarios:ci.comentarios };
+    const onCi = field => e => this.updateCierre(field, e.target.value);
+    const ciHandlers = { inicio:onCi('inicio'), fecha:onCi('fecha'), resultado:onCi('resultado'), lead:onCi('lead'), comentarios:onCi('comentarios') };
+
+    const tier3Complete = !!susFilled && !!cierreFilled;
+    const tier3Checks = [
+      { name:'Plan de Sustain', done: !!susFilled },
+      { name:'Documentación y Cierre', done: !!cierreFilled }
+    ].map(c => ({ name:c.name, done:c.done, dotColor: c.done ? '#31A540' : '#C3CEDD', dotBg: c.done ? '#31A540' : 'transparent' }));
+
+    // ---- Project form ----
+    const pf = (key,label,ph,type) => ({ label, ph, type: type||'text', value: p[key]||'', onChange: e => this.updateProject(key, e.target.value) });
+    const projectFields = [
+      pf('participante','Participante','Tu nombre completo'),
+      pf('email','Email','tu@empresa.com','email'),
+      pf('nombre','Nombre del proyecto','Ej: Implementación SAP HR'),
+      pf('empresa','Empresa / Cliente','Ej: GEPP'),
+      pf('cmLead','CM Lead','Tu nombre o rol'),
+      pf('sponsor','Sponsor','Sponsor ejecutivo'),
+      pf('golive','Go-Live estimado','','date'),
+      pf('personas','Personas impactadas','Ej: 500','number')
+    ];
+    const projectAreas = [
+      { label:'¿Qué cambia exactamente?', ph:'Describe el alcance del cambio...', value:p.descripcion||'', onChange: e => this.updateProject('descripcion', e.target.value) },
+      { label:'Grupos impactados principales', ph:'Ej: Ventas, Logística, Administración...', value:p.grupos||'', onChange: e => this.updateProject('grupos', e.target.value) }
+    ];
+
+    // ---- Navigation ----
+    const cat = [
+      { id:'resumen', name:'Resumen', group:'inicio', tier:null },
+      { id:'proyecto', name:'Mi Proyecto', group:'inicio', tier:null },
+      { id:'impacto', name:'Análisis de Impacto', group:'t1', tier:'T1' },
+      { id:'stakeholders', name:'Mapa de Stakeholders', group:'t1', tier:'T1' },
+      { id:'mitigacion', name:'Plan de Mitigación', group:'t1', tier:'T1' },
+      { id:'comunicacion', name:'Plan de Comunicación', group:'t2', tier:'T2' },
+      { id:'entrenamiento', name:'Plan de Entrenamiento', group:'t2', tier:'T2' },
+      { id:'kpis', name:'Dashboard de KPIs', group:'t2', tier:'T2' },
+      { id:'sustain', name:'Plan de Sustain', group:'t3', tier:'T3' },
+      { id:'cierre', name:'Documentación y Cierre', group:'t3', tier:'T3' }
+    ];
+    const tierColorOf = t => t==='T1' ? '#A5202A' : t==='T2' ? '#E08A00' : t==='T3' ? '#31A540' : '#33B4D2';
+    const projReady = !!(p.nombre && p.nombre.trim());
+    const doneMap = { resumen:false, proyecto:projReady, impacto: filled>0, stakeholders: skTotal>0, mitigacion: mitigFilled>0, comunicacion: commsFilled>0, entrenamiento: trainFilled>0, kpis: kpiFilled, sustain: !!susFilled, cierre: !!cierreFilled };
+    const tier1Complete = filled>0 && skTotal>0 && mitigFilled>0;
+    const allComplete = tier1Complete && tier2Complete && tier3Complete;
+    const tier1Checks = [
+      { name:'Análisis de Impacto', done: filled>0 },
+      { name:'Mapa de Stakeholders', done: skTotal>0 },
+      { name:'Plan de Mitigación', done: mitigFilled>0 }
+    ].map(c => ({ name:c.name, done:c.done, dotColor: c.done ? '#31A540' : '#C3CEDD', dotBg: c.done ? '#31A540' : 'transparent' }));
+    const mk = m => {
+      const active = view===m.id;
+      const accent = tierColorOf(m.tier);
+      const done = !!doneMap[m.id];
+      return {
+        id:m.id, name:m.name, tier:m.tier||'',
+        showDot: !!m.tier,
+        onClick: () => this.setView(m.id),
+        bg: active ? 'rgba(51,180,210,0.12)' : 'transparent',
+        color: active ? '#FFFFFF' : '#8FA6BD',
+        accent: active ? accent : 'transparent',
+        dotColor: done ? '#34C759' : '#3A5070',
+        dotBg: done ? '#34C759' : 'transparent',
+        dotColorL: done ? '#31A540' : '#C3CEDD',
+        dotBgL: done ? '#31A540' : 'transparent'
+      };
+    };
+    const inicioItems = cat.filter(m=>m.group==='inicio').map(mk);
+    const t1Items = cat.filter(m=>m.group==='t1').map(mk);
+    const t2Items = cat.filter(m=>m.group==='t2').map(mk);
+    const t3Items = cat.filter(m=>m.group==='t3').map(mk);
+    const navSections = [
+      { label:'Inicio', accent:'#33B4D2', items:inicioItems },
+      { label:'Tier 1 · Diagnóstico', accent:'#A5202A', items:t1Items },
+      { label:'Tier 2 · Activación', accent:'#E08A00', items:t2Items },
+      { label:'Tier 3 · Sostener', accent:'#31A540', items:t3Items }
+    ];
+
+    const tierMeta = [
+      { tier:'T1', label:'Diagnóstico', sub:'Entender el cambio', accent:'#A5202A', items:t1Items },
+      { tier:'T2', label:'Activación', sub:'Movilizar a las personas', accent:'#E08A00', items:t2Items },
+      { tier:'T3', label:'Sostener', sub:'Anclar y cerrar', accent:'#31A540', items:t3Items }
+    ].map(t => {
+      const dc = t.items.filter(i => i.dotColorL==='#31A540').length;
+      const pct = Math.round(dc / t.items.length * 100);
+      return { ...t, doneCount:dc, total:t.items.length, pctW: pct + '%' };
+    });
+
+    // ---- Header / current view ----
+    const cur = cat.find(m => m.id===view) || cat[0];
+    const headerTitle = cur.name;
+    const headerTier = cur.tier || '';
+    const headerTierColor = tierColorOf(cur.tier);
+
+    const isResumen = view==='resumen';
+    const isProyecto = view==='proyecto';
+    const isImpacto = view==='impacto';
+    const isStakeholders = view==='stakeholders';
+    const isMitig = view==='mitigacion';
+    const isComms = view==='comunicacion';
+    const isTrain = view==='entrenamiento';
+    const isKpis = view==='kpis';
+    const isSustain = view==='sustain';
+    const isCierre = view==='cierre';
+    const isOther = !isResumen && !isProyecto && !isImpacto && !isStakeholders && !isMitig && !isComms && !isTrain && !isKpis && !isSustain && !isCierre;
+
+    const purposes = {
+      stakeholders:'Mapa Poder/Interés de los actores clave y su estrategia de gestión, con cuadrante automático.',
+      mitigacion:'Acciones para mitigar riesgos + los 3 mensajes fundamentales del cambio (qué, por qué, para ti).',
+      comunicacion:'Plan de comunicación por audiencia, canal y frecuencia, con framework WIIFM por nivel.',
+      entrenamiento:'Plan de capacitación por grupo: qué saber, qué hacer, modalidad y evaluación.',
+      kpis:'Tablero ADKAR con línea base y metas a 30 / 60 / 90 días, más el KPI de negocio.',
+      sustain:'Las 4 palancas para sostener el cambio y el timeline de reforzamiento 30-60-90-180.',
+      cierre:'Checklist de cierre, resultados vs. metas, lecciones aprendidas y certificación final.'
+    };
+    const otherPurpose = purposes[view] || '';
+
+    // ---- Next step ----
+    const order = ['impacto','stakeholders','mitigacion','comunicacion','entrenamiento','kpis','sustain','cierre'];
+    let nextId, nextMsg;
+    if(!projReady){ nextId='proyecto'; nextMsg='Completa los datos de tu proyecto para empezar.'; }
+    else { nextId = order.find(id => !doneMap[id]) || 'cierre'; nextMsg = 'Continúa con: ' + ((cat.find(m=>m.id===nextId)||{}).name||''); }
+    const nextName = (cat.find(m=>m.id===nextId)||{}).name || '';
+
+    // ---- Resumen meta ----
+    const projTitle = projReady ? p.nombre : 'Tu proyecto de cambio';
+    const empresa = (p.empresa && p.empresa.trim()) ? p.empresa : 'Empresa por definir';
+    const metaGoLive = p.golive || 'Por definir';
+    const metaPersonas = (p.personas && (''+p.personas).trim()) ? (parseInt(p.personas)||0).toLocaleString('es-MX') : '—';
+    const metaSponsor = p.sponsor || 'Por definir';
+
+    this._maybePersist();
+
+    return {
+      // nav
+      navSections, headerTitle, headerTier, headerTierColor, projTitle,
+      // view flags
+      isResumen, isProyecto, isImpacto, isOther,
+      otherPurpose,
+      // resumen
+      empresa, metaGoLive, metaPersonas, metaSponsor,
+      totalAreas: filled, totalPersonas: totalP.toLocaleString('es-MX'),
+      sem, semColor, semBg, tierMeta, showProgress: this.props.showTierProgress !== false,
+      nextMsg, nextName, goNext: () => this.setView(nextId),
+      // project form
+      projectFields, projectAreas,
+      // impacto
+      impactoRows, altos, tipoMax, nextSteps,
+      addImpacto: () => this.addImpacto(),
+      // stakeholders
+      isStakeholders, skRows, skCells, skResist, skResistN, skPromN,
+      skTotal: skTotal.toLocaleString('es-MX'),
+      addStakeholder: () => this.addStakeholder(),
+      // mitigación
+      isMitig, mitigRows, msgFields, mitTotal, mitDone, mitProc, mitAlta,
+      tier1Complete, tier1NotComplete: !tier1Complete, tier1Checks,
+      certName: p.participante || p.cmLead || 'Participante', certEmpresa: p.empresa || '',
+      addMitig: () => this.addMitig(),
+      // tier 2
+      isComms, commsRows, wiifmFields, addComms: () => this.addComms(),
+      isTrain, trainRows, trainGroups, trainMods, addTrain: () => this.addTrain(),
+      isKpis, adkarRows, kpiNegocio, kpiMeta, kpiResp, kpiFreq,
+      onKpiNegocio, onKpiMeta, onKpiResp, onKpiFreq,
+      tier2Complete, tier2NotComplete: !tier2Complete, tier2Checks,
+      // tier 3
+      isSustain, sustainFields, susHandlers, timelineRows,
+      isCierre, checkRows, checkDone, checkTotal: ci.checklist.length, checkPctW: checkPct + '%', checkPct,
+      resultRows, leccionRows, cierreFields, ciHandlers,
+      addResultado: () => this.addResultado(), addLeccion: () => this.addLeccion(),
+      tier3Complete, tier3NotComplete: !tier3Complete, tier3Checks,
+      allComplete, allNotComplete: !allComplete,
+      // persistencia / db / export
+      dbConnected: this.state.dbConnected, dbDot: this.state.dbConnected ? '#34C759' : '#5E7A9A',
+      showDbConfig: this.state.showDbConfig, dbUrlInput: this.state.dbUrlInput, dbKeyInput: this.state.dbKeyInput,
+      openDbConfig: () => this.openDbConfig(), closeDbConfig: () => this.closeDbConfig(), saveDbConfig: () => this.saveDbConfig(),
+      onDbUrl: e => this.setState({ dbUrlInput: e.target.value }), onDbKey: e => this.setState({ dbKeyInput: e.target.value }),
+      exportExcel: () => this.exportExcel(), printPage: () => this.printPage(),
+      goImpacto: () => this.setView('impacto')
+    };
+  }
+}
+</script>
+</body>
+</html>
