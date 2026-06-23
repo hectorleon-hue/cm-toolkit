@@ -867,8 +867,8 @@ class Component extends DCLogic {
   // ====== CONFIG SUPABASE (opcional) ======
   // Para publicar en Netlify con base de datos, pega aquí tu URL y anon key.
   // También se pueden configurar desde el botón "Base de datos" en el encabezado.
-  DB_URL = '';
-  DB_KEY = '';
+  DB_URL = 'https://finhhxqgckkenhpzmslb.supabase.co';
+  DB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZpbmhoeHFnY2trZW5ocHptc2xiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyOTg0NjcsImV4cCI6MjA5NDg3NDQ2N30.9JHes8MGOlU5LNl0P1oI54jLePdUcmfzE0zt4c675Dw';
   // =========================================
   state = {
     view: (this.props && this.props.initialView) || 'resumen',
@@ -1005,12 +1005,17 @@ class Component extends DCLogic {
   async saveToDb(){
     if(!this.DB) return;
     const p = this.state.project;
+    if(!(p.email||'').trim() && !(p.nombre||'').trim()) return; // evita filas vacías
     try {
-      await this.DB.from('cm_submissions').upsert({
-        email: (p.email||'sin-email').toLowerCase(), proyecto: p.nombre||'sin-nombre',
-        participante: p.participante||'', empresa: p.empresa||'', tier_actual: this.state.view,
-        payload: this.buildPayload(), updated_at: new Date().toISOString()
-      }, { onConflict: 'email,proyecto' });
+      const { error } = await this.DB.rpc('cm_save', {
+        p_email: (p.email||'sin-email').toLowerCase(),
+        p_proyecto: p.nombre||'sin-nombre',
+        p_participante: p.participante||'',
+        p_empresa: p.empresa||'',
+        p_tier: this.state.view,
+        p_payload: this.buildPayload()
+      });
+      if(error) console.warn('DB save:', error.message);
     } catch(e){ console.warn('DB save:', e.message); }
   }
   openDbConfig(){ this.setState({ showDbConfig:true }); }
